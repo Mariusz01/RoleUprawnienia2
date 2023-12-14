@@ -28,8 +28,32 @@ class CreateAdminUserSeeder extends Seeder
         $role->syncPermissions($permissions);
         $user->assignRole([$role->id]);
 
-        // $role2 = Role::create(['name' => 'Product']);
-        // $permissions2 = Permission::pluck('id', 'id')->array[]
+        $role2 = Role::create(['name' => 'Product']);
+        $selectedPermissionIds = [5, 6, 7, 8]; // Identyfikatory wierszy, których kolumnę chcesz pobrać
+        $selectedColumnValues = Permission::whereIn('id', $selectedPermissionIds)->pluck('id');
+        $role2->syncPermissions($selectedColumnValues);
+
+        \App\Models\User::factory(10)->create()->each(function($user){
+            // Przypisanie roli 'User'
+            $user->assignRole('Product');
+            // Przypisanie uprawnienia 'edit articles'
+            // $user->givePermissionTo('edit articles');
+        });
+        \App\Models\User::factory(10)->create()->each(function($user){
+            // Przypisanie roli 'User'
+            $user->assignRole('Admin');
+            // Przypisanie uprawnienia 'edit articles'
+            // $user->givePermissionTo('edit articles');
+        });
+
+        // factory(User::class, 10)->create()->each(function ($user) {
+        //     // Przypisanie roli 'User'
+        //     $user->assignRole('User');
+
+        //     // Przypisanie uprawnienia 'edit articles'
+        //     $user->givePermissionTo('edit articles');
+        // });
+
     }
 }
 
@@ -41,5 +65,6 @@ php artisan make:seeder PermissionTableSeeder
 php artisan db:seed --class=PermissionTableSeeder
 php artisan db:seed --class=CreateAdminUserSeeder
 
-php artisan migrate:fresh --seed --seeder=CreateAdminUserSeeder
+// W pliku DatabseSeeder wprowadziłem w jakiej kolejności ma uruchamiać
+php artisan migrate:fresh --seed --seeder=DatabaseSeeder
 */

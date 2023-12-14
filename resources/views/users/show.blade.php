@@ -31,6 +31,7 @@
         <div class="form-group">
             <strong>Roles:</strong>
             @if(!empty($user->getRoleNames()))
+            <br />
                 @foreach($user->getRoleNames() as $v)
                     <label class="badge-success">{{ $v }}</label>
                 @endforeach

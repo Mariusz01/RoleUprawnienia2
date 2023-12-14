@@ -51,7 +51,7 @@
   </tr>
  @endforeach
 </table>
-
+<p class="test">test</p>
 
 {!! $data->render() !!}
 
