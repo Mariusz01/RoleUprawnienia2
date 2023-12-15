@@ -6,5 +6,11 @@
 svg {
     width: 20px; /* Dostosuj szerokość ikony do preferencji */
     height: 20px; /* Dostosuj wysokość ikony do preferencji */
-    fill: #007bff; /* Kolor wypełnienia ikony */
+    /* fill: #007bff;  Kolor wypełnienia ikony */
   }
+
+
+
+div{
+    padding-bottom: 5px;
+}
