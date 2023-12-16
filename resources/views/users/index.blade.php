@@ -37,7 +37,7 @@
     <td>
       @if(!empty($user->getRoleNames()))
         @foreach($user->getRoleNames() as $v)
-           <label class="badge-success">{{ $v }}</label>
+           <label>{{ $v }}</label>
         @endforeach
       @endif
     </td>
@@ -51,7 +51,6 @@
   </tr>
  @endforeach
 </table>
-<p class="test">test</p>
 
 {!! $data->render() !!}
 

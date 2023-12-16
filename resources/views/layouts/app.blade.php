@@ -1,3 +1,4 @@
+<!doctype html>
 <html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="utf-8">
@@ -18,6 +19,12 @@
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     {{-- <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <script src="{{ asset('js/app.js') }}" defer></script> --}}
+    <script>
+        function goBack() {
+          window.history.back();
+        }
+      </script>
+
 </head>
 <body>
     <div id="app">
@@ -45,6 +52,7 @@
                             <li><a class="nav-link" href="{{ route('users.index') }}">Manage Users</a></li>
                             <li><a class="nav-link" href="{{ route('roles.index') }}">Manage Role</a></li>
                             <li><a class="nav-link" href="{{ route('products.index') }}">Manage Product</a></li>
+                            <li><a class="nav-link" href="{{ route('words.index') }}">Słowa</a></li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
@@ -71,7 +79,7 @@
 
         <main class="py-4">
             <div class="container">
-            @yield('content')
+                @yield('content')
             </div>
         </main>
     </div>

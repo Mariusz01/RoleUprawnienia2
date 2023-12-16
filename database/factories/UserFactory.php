@@ -23,8 +23,11 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        // mogło by być userName jako login, a to jest po to aby było tylko imię i nazwisko
+        $imienazwisko = fake()->firstName();
+        $imienazwisko = $imienazwisko . " " . fake()->lastName();
         return [
-            'name' => fake()->name(),
+            'name' => $imienazwisko,
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('mariusz'),
