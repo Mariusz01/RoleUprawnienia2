@@ -15,4 +15,10 @@ class Word extends Model
         'znaczenie',
         'przyklad',
     ];
+
+
+    public function profiler()
+    {
+        return $this->hasOne(Profiler::class);
+    }
 }

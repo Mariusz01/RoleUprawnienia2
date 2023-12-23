@@ -49,11 +49,17 @@
                             <li><a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a></li>
                             <li><a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a></li>
                         @else
-                            <li><a class="nav-link" href="{{ route('users.index') }}">Manage Users</a></li>
-                            <li><a class="nav-link" href="{{ route('roles.index') }}">Manage Role</a></li>
-                            <li><a class="nav-link" href="{{ route('products.index') }}">Manage Product</a></li>
-                            <li><a class="nav-link" href="{{ route('words.index') }}">Słowa</a></li>
-                            <li class="nav-item dropdown">
+                        @auth
+                            @if(auth()->user()->hasRole('admin'))
+                                <li><a class="nav-link" href="{{ route('users.index') }}">Manage Users</a></li>
+                                <li><a class="nav-link" href="{{ route('roles.index') }}">Manage Role</a></li>
+                                <li><a class="nav-link" href="{{ route('products.index') }}">Manage Product</a></li>
+                                <li><a class="nav-link" href="{{ route('words.index') }}">Słówka</a></li>
+                            @else
+                                <li><a class="nav-link" href="{{ route('slowka.index') }}">Słówka</a></li>
+                            @endif
+                        @endauth
+                        <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
                                 </a>

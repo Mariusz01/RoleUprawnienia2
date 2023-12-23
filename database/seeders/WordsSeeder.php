@@ -12,6 +12,6 @@ class WordsSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Word::factory(340)->create();
+        \App\Models\Word::factory(1000)->create();
     }
 }

@@ -44,6 +44,9 @@ class CreateAdminUserSeeder extends Seeder
             $user->assignRole('Admin');
             // Przypisanie uprawnienia 'edit articles'
             // $user->givePermissionTo('edit articles');
+
+            // jak dodać kolumnę w tabeli profilers z oznaczeniem usera
+            
         });
 
         // factory(User::class, 10)->create()->each(function ($user) {

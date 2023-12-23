@@ -26,7 +26,10 @@ class PermissionTableSeeder extends Seeder
            'word-list',
            'word-create',
            'word-edit',
-           'word-delete'
+           'word-delete',
+
+           'admin',
+           'zwykly-user'
         ];
 
         foreach ($permissions as $permission) {
