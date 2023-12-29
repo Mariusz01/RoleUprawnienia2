@@ -20,34 +20,41 @@ class CreateAdminUserSeeder extends Seeder
         $user = User::create([
             'name' => 'mariusz',
             'email' => 'marmos01@wp.pl',
-            'password' => bcrypt('marmos')
+            'password' => bcrypt('marmos'),
+            'email_verified_at' => now(),
         ]);
 
         $role = Role::create(['name' => 'Admin']);
         $permissions = Permission::pluck('id','id')->all();
         $role->syncPermissions($permissions);
-        $user->assignRole([$role->id]);
+        // $user->assignRole([$role->id]);
+        $user->assignRole('Admin');
 
         $role2 = Role::create(['name' => 'Product']);
-        $selectedPermissionIds = [5, 6, 7, 8]; // Identyfikatory wierszy, których kolumnę chcesz pobrać
+        $selectedPermissionIds = [7, 8, 9, 10]; // Identyfikatory wierszy, których kolumnę chcesz pobrać
         $selectedColumnValues = Permission::whereIn('id', $selectedPermissionIds)->pluck('id');
         $role2->syncPermissions($selectedColumnValues);
 
-        \App\Models\User::factory(10)->create()->each(function($user){
-            // Przypisanie roli 'User'
-            $user->assignRole('Product');
-            // Przypisanie uprawnienia 'edit articles'
-            // $user->givePermissionTo('edit articles');
-        });
-        \App\Models\User::factory(10)->create()->each(function($user){
-            // Przypisanie roli 'User'
-            $user->assignRole('Admin');
-            // Przypisanie uprawnienia 'edit articles'
-            // $user->givePermissionTo('edit articles');
+        $role3 = Role::create(['name' => 'Uzytkownik1']);
+        $selectedPermissionIds = [15, 16, 17, 18, 19]; // Identyfikatory wierszy, których kolumnę chcesz pobrać
+        $selectedColumnValues = Permission::whereIn('id', $selectedPermissionIds)->pluck('id');
+        $role3->syncPermissions($selectedColumnValues);
 
-            // jak dodać kolumnę w tabeli profilers z oznaczeniem usera
-            
+        \App\Models\User::factory(10)->create()->each(function($user){
+            // Przypisanie roli 'Uzytkownik1'
+            $user->assignRole('Uzytkownik1');
+            // Przypisanie uprawnienia 'edit articles'
+            // $user->givePermissionTo('edit articles');
         });
+        // \App\Models\User::factory(10)->create()->each(function($user){
+        //     // Przypisanie roli 'Admin'
+        //     $user->assignRole('Admin');
+        //     // Przypisanie uprawnienia 'edit articles'
+        //     // $user->givePermissionTo('edit articles');
+
+        //     // jak dodać kolumnę w tabeli profilers z oznaczeniem usera
+
+        // });
 
         // factory(User::class, 10)->create()->each(function ($user) {
         //     // Przypisanie roli 'User'
