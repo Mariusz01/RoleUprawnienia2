@@ -32,12 +32,20 @@
     <td>{{ $zestaw->occurrences }}</td>
     <td>
         @php
-            $parametr = 'wartosc_parametru';
-            $url = url("/sciezka?parametr={$parametr}");
-            $user_id = Auth::user()->id;
+            // $parametr = 'wartosc_parametru';
+            // $url = url("/sciezka?parametr={$parametr}");
+            // $user_id = Auth::user()->id;
         @endphp
+
         <a class="btn btn-info" href="{{ route('slowka.show',$zestaw->nrzestawu) }}">Pokaż</a>
-        <a class="btn btn-success" href="{{ route('slowka.create',['nrzestawu' => $zestaw->nrzestawu, 'robicdla' => $user_id]) }}">Dodaj zestaw do nauki</a>
+
+        <form action="{{ route('slowka.create') }}" method="GET">
+            @csrf
+            <input type="hidden" name="nrzestawu" value={{$zestaw->nrzestawu}}>
+            <button type="submit">Dodaj zestaw do nauki</button>
+        </form>
+
+        <a class="btn btn-success" href="{{ route('slowka.create', ['nrzestawu' => $zestaw->nrzestawu] ) }}">Dodaj zestaw do nauki</a>
         {{-- <a class="btn btn-primary" href="{{ route('slowka.edit',$word->id) }}">Edit</a> --}}
         {{-- {!! Form::open(['method' => 'DELETE','route' => ['slowka.destroy', $zestaw->nrzestawu],'style'=>'display:inline']) !!} --}}
             {{-- {!! Form::submit('Delete', ['class' => 'btn btn-danger']) !!} --}}

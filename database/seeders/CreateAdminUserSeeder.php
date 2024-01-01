@@ -30,6 +30,13 @@ class CreateAdminUserSeeder extends Seeder
         // $user->assignRole([$role->id]);
         $user->assignRole('Admin');
 
+        $user2 = User::create([
+            'name' => 'mariusz2',
+            'email' => 'marmos02@wp.pl',
+            'password' => bcrypt('marmos'),
+            'email_verified_at' => now(),
+        ]);
+
         $role2 = Role::create(['name' => 'Product']);
         $selectedPermissionIds = [7, 8, 9, 10]; // Identyfikatory wierszy, których kolumnę chcesz pobrać
         $selectedColumnValues = Permission::whereIn('id', $selectedPermissionIds)->pluck('id');
@@ -39,6 +46,8 @@ class CreateAdminUserSeeder extends Seeder
         $selectedPermissionIds = [15, 16, 17, 18, 19]; // Identyfikatory wierszy, których kolumnę chcesz pobrać
         $selectedColumnValues = Permission::whereIn('id', $selectedPermissionIds)->pluck('id');
         $role3->syncPermissions($selectedColumnValues);
+
+        $user2->assignRole('Uzytkownik1');
 
         \App\Models\User::factory(10)->create()->each(function($user){
             // Przypisanie roli 'Uzytkownik1'

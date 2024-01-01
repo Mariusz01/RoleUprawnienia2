@@ -30,7 +30,24 @@
 @endforeach --}}
 
 
-    {!! $tab_slowka->links() !!}
+    {{-- {!! $tab_slowka->links() !!} --}}
+    {{-- {{ $tab_slowka[2]}} --}}
+@php
+    // foreach ($tablica2 as $to){
+        // echo '<pre>';
+        // print_r($tab_slowka);
+        // echo '</pre>';
+    // }
+    // Pobierz zalogowanego użytkownika
+    // $user = Auth::user();
+    // // Pobierz ID zalogowanego użytkownika
+    // $userId = $user->id;
+    // $userKolumna = 'u'.$userId;
+    // echo 'numer zestawu = '.$nrzestawu.'<br />';
+    // echo 'test = '.$userKolumna.'<br />';
+    // dd($tab_slowka);
+@endphp
+
 
 <table class="table table-bordered">
     <tr>
@@ -43,60 +60,25 @@
     </tr>
 
 
-    @for ($i=0;$i<count($tab_slowka);$i++)
+    @foreach ($tab_slowka as $to)
         <tr>
-            <td>{{ $tab_slowka[$i]->id }}</td>
-            <td>{{ $tab_slowka[$i]->word_nrzestawu }}</td>
-
-            @php
-                $user = Auth::user();
-                $userId = 'u'.$user->id;
-                $ztab_slowka = $tab_slowka[$i]->$userId;
-                $tablica = explode(";;", $ztab_slowka);
-            @endphp
-
-                {{-- {{ $tablica[1] }} --}}
-
-
-            @if($tablica[1]==='c')
-                <td>{{ $tablica[2] }}</td>
-                <td>{{ $tablica[3] }}</td>
-                <td>
-                @if(!empty( $tablica[4] ))
-                    {{ $tablica[4] }}
-                @endif
-                @else
-                <td>{{ $tab_words[$i]->slowo }}</td>
-                <td>{{ $tab_words[$i]->znaczenie }}</td>
-                <td>
-                @if(!empty( $tab_words[$i]->przyklad  ))
-                    {{ $tab_words[$i]->przyklad }}
-                @endif
-                </td>
-            @endif
-
+            <td>{{ $to->id }}</td>
+            <td>{{ $nrzestawu }}</td>
+            <td>{{ $to->slowo }}</td>
+            <td>{{ $to->znaczenie }}</td>
+            <td>{{ $to->przyklad }}</td>
 
 
             <td>
                 {{-- <a class="btn btn-info" href="{{ route('slowka.show',$word->id) }}">Show</a> --}}
-                <a class="btn btn-primary" href="{{ route('slowka.edit',$tab_slowka[$i]->id) }}">Edit</a>
-                    {!! Form::open(['method' => 'DELETE','route' => ['slowka.destroy', $tab_slowka[$i]->id],'style'=>'display:inline']) !!}
+                <a class="btn btn-primary" href="{{ route('slowka.edit',$to->id) }}">Edit</a>
+                    {!! Form::open(['method' => 'DELETE','route' => ['slowka.destroy', $to->id],'style'=>'display:inline']) !!}
                         {!! Form::submit('Delete', ['class' => 'btn btn-danger']) !!}
                     {!! Form::close() !!}
-                </td>
-
-
-
-
-
-
-
-
-
-
+            </td>
 
         </tr>
-    @endfor
+    @endforeach
 
 
 </table>
@@ -108,6 +90,6 @@
 
 
 {{-- {!! $nrzestawu ->render() !!} --}}
-{!! $tab_slowka->links() !!}
+{{-- {!! $tab_slowka->links() !!} --}}
 
 @endsection

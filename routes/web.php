@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,5 +29,5 @@ Route::group(['middleware' => ['auth', 'verified']], function() {
     Route::resource('products', App\Http\Controllers\ProductController::class);
     Route::resource('words', App\Http\Controllers\WordController::class);
     Route::resource('slowka', App\Http\Controllers\SlowkaController::class);
-    Route::get('/slowka/create/{nrzestawu}/{robicdla}', [App\Http\Controllers\SlowkaController::class, 'create'])->name('slowka.create');
+    // Route::get('/slowka/create/{nrzestawu}/{robicdla}', [App\Http\Controllers\SlowkaController::class, 'create'])->name('slowka.create');
 });
