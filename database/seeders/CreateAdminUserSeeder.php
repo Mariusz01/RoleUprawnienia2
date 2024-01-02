@@ -32,7 +32,7 @@ class CreateAdminUserSeeder extends Seeder
 
         $user2 = User::create([
             'name' => 'mariusz2',
-            'email' => 'marmos02@wp.pl',
+            'email' => 'marmos01@poczta.onet.pl',
             'password' => bcrypt('marmos'),
             'email_verified_at' => now(),
         ]);
@@ -42,16 +42,21 @@ class CreateAdminUserSeeder extends Seeder
         $selectedColumnValues = Permission::whereIn('id', $selectedPermissionIds)->pluck('id');
         $role2->syncPermissions($selectedColumnValues);
 
-        $role3 = Role::create(['name' => 'Uzytkownik1']);
+        $role3 = Role::create(['name' => 'UzytkownikTabele']);
         $selectedPermissionIds = [15, 16, 17, 18, 19]; // Identyfikatory wierszy, których kolumnę chcesz pobrać
         $selectedColumnValues = Permission::whereIn('id', $selectedPermissionIds)->pluck('id');
         $role3->syncPermissions($selectedColumnValues);
 
-        $user2->assignRole('Uzytkownik1');
+        $role3 = Role::create(['name' => 'UzytkownikBezUpr']);
+        $selectedPermissionIds = []; // Identyfikatory wierszy, których kolumnę chcesz pobrać
+        $selectedColumnValues = Permission::whereIn('id', $selectedPermissionIds)->pluck('id');
+        $role3->syncPermissions($selectedColumnValues);
+
+        $user2->assignRole('UzytkownikTabele');
 
         \App\Models\User::factory(10)->create()->each(function($user){
-            // Przypisanie roli 'Uzytkownik1'
-            $user->assignRole('Uzytkownik1');
+            // Przypisanie roli 'UzytkownikTabele'
+            $user->assignRole('UzytkownikTabele');
             // Przypisanie uprawnienia 'edit articles'
             // $user->givePermissionTo('edit articles');
         });
