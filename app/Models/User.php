@@ -16,6 +16,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
+        'is_approved',
     ];
 
     protected $hidden = [
@@ -26,6 +27,11 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function isApproved()
+    {
+        return $this->is_approved;
+    }
 
     // public function profile()
     // {

@@ -68,6 +68,8 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            //do zatwierdzania rejstrującyh się
+            'is_approved' => false,
         ]);
 
         // do weryfikacji przez email
@@ -76,4 +78,5 @@ class RegisterController extends Controller
 
         return $user;
     }
+
 }
