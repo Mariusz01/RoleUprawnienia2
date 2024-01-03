@@ -22,12 +22,15 @@ class CreateAdminUserSeeder extends Seeder
             'email' => 'marmos01@wp.pl',
             'password' => bcrypt('marmos'),
             'email_verified_at' => now(),
+            'admin' => 1,
+            'approved_at' => now(),
         ]);
 
         $role = Role::create(['name' => 'Admin']);
         $permissions = Permission::pluck('id','id')->all();
         $role->syncPermissions($permissions);
         // $user->assignRole([$role->id]);
+        
         $user->assignRole('Admin');
 
         $user2 = User::create([

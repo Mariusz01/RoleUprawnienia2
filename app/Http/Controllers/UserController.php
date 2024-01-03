@@ -21,9 +21,18 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $data = User::orderBy('id','DESC')->paginate(15);
-        return view('users.index',compact('data'))
+        //to jest według przykładu
+        // $users = User::whereNull('approved_at')->get();
+        // return view('users', compact('users'));
+
+        // a to po modyfikacji aby się otwierało na mojej stronie
+        $data = User::whereNull('approved_at')->get();
+        return view('users', compact('data'))
             ->with('i', ($request->input('page', 1) - 1) * 15);
+
+        // $data = User::orderBy('id','DESC')->paginate(15);
+        // return view('users.index',compact('data'))
+        //     ->with('i', ($request->input('page', 1) - 1) * 15);
     }
 
     /**
@@ -133,5 +142,18 @@ class UserController extends Controller
         User::find($id)->delete();
         return redirect()->route('users.index')
                         ->with('success','User deleted successfully');
+    }
+
+
+    public function approve($user_id)
+    {
+        $user = User::findOrFail($user_id);
+        // $user->update(['approved_at' => now()]);
+        $user->approved_at = now();
+        $user->save();
+
+        // return redirect()->route('admin.users.index')->withMessage('User approved successfully');
+        return redirect()->route('users.index')
+            ->with('success','User approved successfully');
     }
 }

@@ -21,7 +21,22 @@ Route::get('/', function () {
 // Auth::routes();
 Auth::routes(['verify' => true]);
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/approval', 'App\Http\Controllers\HomeController@approval')->name('approval');
+
+    Route::middleware(['approved'])->group(function () {
+        Route::get('/home', 'App\Http\Controllers\HomeController@index')->name('home');
+    });
+
+    Route::middleware(['admin'])->group(function () {
+        Route::get('/users', 'App\Http\Controllers\UserController@index')->name('admin.users.index');
+        Route::get('/users/{user_id}/approve', 'App\Http\Controllers\UserController@approve')->name('admin.users.approve');
+    });
+});
 
 Route::group(['middleware' => ['auth', 'verified']], function() {
     Route::resource('roles', App\Http\Controllers\RoleController::class);
