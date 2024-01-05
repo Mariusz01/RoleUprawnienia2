@@ -24,15 +24,16 @@ class UserController extends Controller
         //to jest według przykładu
         // $users = User::whereNull('approved_at')->get();
         // return view('users', compact('users'));
-
-        // a to po modyfikacji aby się otwierało na mojej stronie
-        $data = User::whereNull('approved_at')->get();
-        return view('users', compact('data'))
-            ->with('i', ($request->input('page', 1) - 1) * 15);
-
-        // $data = User::orderBy('id','DESC')->paginate(15);
-        // return view('users.index',compact('data'))
-        //     ->with('i', ($request->input('page', 1) - 1) * 15);
+        // if($request->man == 0){
+            $data = User::orderBy('id','ASC')->paginate(15);
+            return view('users.index',compact('data'))
+                ->with('i', ($request->input('page', 1) - 1) * 15);
+        // }else{
+            // // a to po modyfikacji aby się otwierało na mojej stronie, wystarczy wpisac users.index
+            // $data = User::whereNull('approved_at')->get();
+            // return view('users2', compact('data'))
+            //     ->with('i', ($request->input('page', 1) - 1) * 15);
+        // }
     }
 
     /**

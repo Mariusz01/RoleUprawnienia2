@@ -20,19 +20,20 @@
 </div>
 @endif
 
-{{-- {!! $data->render() !!} --}}
+{!! $data->render() !!}
 <table class="table table-bordered">
  <tr>
-   <th>No</th>
+   <th>Nr id</th>
    <th>Name</th>
    <th>Email</th>
    <th>Roles</th>
    <th>Registered at</th>
-   <th width="280px">Action</th>
+   <th>Zatwierdź</th>
+   <th>Action</th>
  </tr>
  @foreach ($data as $key => $user)
   <tr>
-    <td>{{ ++$i }}</td>
+    <td>{{ $user->id }}</td>
     <td>{{ $user->name }}</td>
     <td>{{ $user->email }}</td>
     <td>
@@ -44,7 +45,13 @@
     </td>
     <td>{{ $user->created_at }}</td>
     <td>
-        <a href="{{ route('admin.users.approve', $user->id) }}" class="btn btn-primary btn-sm">Approve</a>
+
+        @if (!$user->approved_at)
+            <a href="{{ route('admin.users.approve', $user->id) }}"
+                class="btn btn-primary btn-sm">Approve</a>
+        @endif
+    </td>
+    <td>
        <a class="btn btn-info" href="{{ route('users.show',$user->id) }}">Show</a>
        <a class="btn btn-primary" href="{{ route('users.edit',$user->id) }}">Edit</a>
         {!! Form::open(['method' => 'DELETE','route' => ['users.destroy', $user->id],'style'=>'display:inline']) !!}
@@ -55,6 +62,6 @@
  @endforeach
 </table>
 
-{{-- {!! $data->render() !!} --}}
+{!! $data->render() !!}
 
 @endsection

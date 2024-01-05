@@ -28,8 +28,14 @@ Auth::routes(['verify' => true]);
 Route::middleware(['auth'])->group(function () {
     Route::get('/approval', 'App\Http\Controllers\HomeController@approval')->name('approval');
 
-    Route::middleware(['approved'])->group(function () {
+    Route::middleware(['approved', 'verified'])->group(function () {
         Route::get('/home', 'App\Http\Controllers\HomeController@index')->name('home');
+        // te były osobno, pierwsze jako przykład ról
+        Route::resource('slowka', App\Http\Controllers\SlowkaController::class);
+        Route::resource('roles', App\Http\Controllers\RoleController::class);
+        Route::resource('users', App\Http\Controllers\UserController::class);
+        Route::resource('products', App\Http\Controllers\ProductController::class);
+        Route::resource('words', App\Http\Controllers\WordController::class);
     });
 
     Route::middleware(['admin'])->group(function () {
@@ -38,11 +44,12 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
-Route::group(['middleware' => ['auth', 'verified']], function() {
-    Route::resource('roles', App\Http\Controllers\RoleController::class);
-    Route::resource('users', App\Http\Controllers\UserController::class);
-    Route::resource('products', App\Http\Controllers\ProductController::class);
-    Route::resource('words', App\Http\Controllers\WordController::class);
-    Route::resource('slowka', App\Http\Controllers\SlowkaController::class);
+// Route::group(['middleware' => ['auth', 'verified']], function() {
+    // Route::resource('slowka', App\Http\Controllers\SlowkaController::class);
+    // Route::resource('roles', App\Http\Controllers\RoleController::class);
+    // Route::resource('/users', App\Http\Controllers\UserController::class);
+    // Route::resource('products', App\Http\Controllers\ProductController::class);
+    // Route::resource('words', App\Http\Controllers\WordController::class);
+// to niżej całkiem wyłączyłem, nie trzeba było
     // Route::get('/slowka/create/{nrzestawu}/{robicdla}', [App\Http\Controllers\SlowkaController::class, 'create'])->name('slowka.create');
-});
+// });

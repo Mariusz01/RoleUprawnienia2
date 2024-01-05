@@ -31,7 +31,7 @@
         <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    Test uprawnień
+                    <strong>TEST</strong>
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -51,11 +51,21 @@
                         @else
                         @auth
                             @if(auth()->user()->hasRole('Admin'))
-                                <li><a class="nav-link" href="{{ route('users.index') }}">Manage Users</a></li>
+
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle"  role="button" data-bs-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="false" v-pre>Manage Users</a>
+                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="{{ route('admin.users.index') }}">Użytkownicy do zatwierdzenia</a>
+                                        <a class="dropdown-item" href="{{ route('admin.users.index') }}">Użytkownicy</a>
+                                    </div>
+                                </li>
+
                                 <li><a class="nav-link" href="{{ route('roles.index') }}">Manage Role</a></li>
                                 <li><a class="nav-link" href="{{ route('products.index') }}">Manage Product</a></li>
                                 <li><a class="nav-link" href="{{ route('words.index') }}">Słówka</a></li>
                                 <li><a class="nav-link" href="{{ route('slowka.index') }}">Tabele słowek</a></li>
+                            {{-- @elseif(!auth()->user()->approved_add) --}}
                             @else
                                 <li><a class="nav-link" href="{{ route('slowka.index') }}">Tabele słowek</a></li>
                             @endif
