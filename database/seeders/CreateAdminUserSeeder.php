@@ -38,7 +38,7 @@ class CreateAdminUserSeeder extends Seeder
             'email' => 'marmos01@poczta.onet.pl',
             'password' => bcrypt('marmos'),
             'email_verified_at' => now(),
-            'approval_at' => now(),
+            'approved_at' => now(),
         ]);
 
         $role2 = Role::create(['name' => 'Product']);

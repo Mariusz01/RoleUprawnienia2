@@ -38,9 +38,9 @@
         </div>
     @endif
 @php
-    // echo '<pre>';
-    // print_r($word);
-    // echo '</pre>';
+    echo '<pre>';
+    print_r($word);
+    echo '</pre>';
     // echo '<br /><br />';
     // // echo $word->userKolumna;
     // echo '<br /><br />';

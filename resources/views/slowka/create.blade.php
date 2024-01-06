@@ -54,6 +54,7 @@ $numeracja = ($wybrany_zestaw->currentPage() - 1) * $wybrany_zestaw->perPage();
                 @if(!empty( $tablica[3]  ))
                     {{ $tablica[3] }}
                 @endif
+            @elseif()
             @else
                 <td>{{ $tab_words[$i]->slowo }}</td>
                 <td>{{ $tab_words[$i]->znaczenie }}</td>

@@ -20,6 +20,23 @@
 </div>
 @endif
 
+@php
+    // var_dump($wyniki)
+    // echo '<pre>';
+    // print_r($wyniki);
+    // echo '</pre>';
+
+
+@endphp
+
+{{-- @foreach ($wyniki as $key)
+        {{$key }} <br />
+@endforeach
+<br /><br />
+@foreach ($slowka as $zestaw)
+    {{ var_dump($zestaw) }} <br />
+@endforeach --}}
+{{-- <br /> --}}
 
 <table class="table table-bordered">
  <tr>
@@ -39,13 +56,20 @@
 
         <a class="btn btn-info" href="{{ route('slowka.show',$zestaw->nrzestawu) }}">Pokaż</a>
 
-        <form action="{{ route('slowka.create') }}" method="GET">
+        {{-- <form action="{{ route('slowka.create') }}" method="GET">
             @csrf
             <input type="hidden" name="nrzestawu" value={{$zestaw->nrzestawu}}>
-            <button type="submit">Dodaj zestaw do nauki</button>
-        </form>
+            <button type="submit" class="btn btn-success" >Dodaj zestaw do nauki</button>
+        </form> --}}
 
-        <a class="btn btn-success" href="{{ route('slowka.create', ['nrzestawu' => $zestaw->nrzestawu] ) }}">Dodaj zestaw do nauki</a>
+        @if ($zestaw->dodana == 0)
+            <a class="btn btn-success" href="{{ route('slowka.create', ['nrzestawu' => $zestaw->nrzestawu,'dodaj'=>'1'] ) }}">Dodaj zestaw do nauki</a>
+        @elseif ($zestaw->dodana == 1)
+            <a class="btn btn-warning" href=""> Dodany zestaw do nauki </a>
+            <a class="btn btn-danger" href=""> Usuń </a>
+        @endif
+
+
         {{-- <a class="btn btn-primary" href="{{ route('slowka.edit',$word->id) }}">Edit</a> --}}
         {{-- {!! Form::open(['method' => 'DELETE','route' => ['slowka.destroy', $zestaw->nrzestawu],'style'=>'display:inline']) !!} --}}
             {{-- {!! Form::submit('Delete', ['class' => 'btn btn-danger']) !!} --}}

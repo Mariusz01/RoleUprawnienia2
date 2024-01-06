@@ -33,7 +33,7 @@
     {{-- {!! $tab_slowka->links() !!} --}}
     {{-- {{ $tab_slowka[2]}} --}}
 @php
-    // foreach ($tablica2 as $to){
+    // foreach ($tab_slowka as $to){
         // echo '<pre>';
         // print_r($tab_slowka);
         // echo '</pre>';
@@ -46,6 +46,7 @@
     // echo 'numer zestawu = '.$nrzestawu.'<br />';
     // echo 'test = '.$userKolumna.'<br />';
     // dd($tab_slowka);
+    // var_dump($tab_slowka);
 @endphp
 
 
@@ -56,6 +57,8 @@
         <th>Słówko</th>
         <th>Znaczenie</th>
         <th>Przykład</th>
+        {{-- <th>edyt?</th> --}}
+        {{-- <th>usuń</th> --}}
         <th width="280px">Action</th>
     </tr>
 
@@ -67,14 +70,27 @@
             <td>{{ $to->slowo }}</td>
             <td>{{ $to->znaczenie }}</td>
             <td>{{ $to->przyklad }}</td>
+            {{-- <td>{{ $to->edytuj }}</td> --}}
+            {{-- <td>{{ $to->dodac }}</td> --}}
 
 
             <td>
                 {{-- <a class="btn btn-info" href="{{ route('slowka.show',$word->id) }}">Show</a> --}}
-                <a class="btn btn-primary" href="{{ route('slowka.edit',$to->id) }}">Edit</a>
+                @if (!empty($to->edytuj) && $to->edytuj == 'c')
+                    <a class="btn btn-success" href="{{ route('slowka.edit',$to->id) }}">Edytuj</a>
+                @else
+                    <a class="btn btn-primary" href="{{ route('slowka.edit',$to->id) }}">Edytuj</a>
+                @endif
+
+                @if (empty($to->dodac) || $to->dodac == '+')
                     {!! Form::open(['method' => 'DELETE','route' => ['slowka.destroy', $to->id],'style'=>'display:inline']) !!}
-                        {!! Form::submit('Delete', ['class' => 'btn btn-danger']) !!}
+                        {!! Form::submit('Usuń', ['class' => 'btn btn-danger']) !!}
                     {!! Form::close() !!}
+                @else
+                {{-- musisz obsługę tego przycisku --}}
+                    <a class="btn btn-success" href="{{ route('slowka.edit',[$to->id]) }}">Dodaj</a>
+                @endif
+
             </td>
 
         </tr>
