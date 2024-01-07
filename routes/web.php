@@ -36,6 +36,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('users', App\Http\Controllers\UserController::class);
         Route::resource('products', App\Http\Controllers\ProductController::class);
         Route::resource('words', App\Http\Controllers\WordController::class);
+        Route::get('/usunzestaw', 'App\Http\Controllers\SlowkaController@usunzestaw')->name('slowka.usunzestaw');
     });
 
     Route::middleware(['admin'])->group(function () {

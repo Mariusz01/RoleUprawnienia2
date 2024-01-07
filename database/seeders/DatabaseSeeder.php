@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
             CreateAdminUserSeeder::class,
             ProductSeeder::class,
             WordsSeeder::class,
-            ProfilerSeeder::class,
+            // ProfilerSeeder::class,
             ]);
     }
 }

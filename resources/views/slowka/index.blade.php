@@ -66,7 +66,7 @@
             <a class="btn btn-success" href="{{ route('slowka.create', ['nrzestawu' => $zestaw->nrzestawu,'dodaj'=>'1'] ) }}">Dodaj zestaw do nauki</a>
         @elseif ($zestaw->dodana == 1)
             <a class="btn btn-warning" href=""> Dodany zestaw do nauki </a>
-            <a class="btn btn-danger" href=""> Usuń </a>
+            <a class="btn btn-danger" href="{{ route('slowka.usunzestaw', ['nrzestawu' => $zestaw->nrzestawu,'dodaj'=>'2'] ) }}"> Usuń </a>
         @endif
 
 

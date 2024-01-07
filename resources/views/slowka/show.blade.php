@@ -86,9 +86,9 @@
                     {!! Form::open(['method' => 'DELETE','route' => ['slowka.destroy', $to->id],'style'=>'display:inline']) !!}
                         {!! Form::submit('Usuń', ['class' => 'btn btn-danger']) !!}
                     {!! Form::close() !!}
-                @else
+                @elseif((!empty($to->dodac) || $to->dodac == '-'))
                 {{-- musisz obsługę tego przycisku --}}
-                    <a class="btn btn-success" href="{{ route('slowka.edit',[$to->id]) }}">Dodaj</a>
+                <a class="btn btn-success" href="{{ route('slowka.create', ['nrzestawu' => $to->id,'dodaj'=>'2'] ) }}">Dodaj</a>
                 @endif
 
             </td>

@@ -18,87 +18,117 @@ class ProfilerSeeder extends Seeder
      */
     public function run(): void
     {
-        // Dodaj przykładowe dane dla powiązanej tabeli dla każdego użytkownika
-         $users = User::all();
-        //  $words = Word::count();
+        $users = User::all();
+            $ile = 0;
+            foreach ($users as $user) {
+                // Pobierz dane z źródłowej tabeli
+                $daneZrodlowe = DB::table('words')->select('id', 'nrzestawu')->get();
+                // Iteruj po danych źródłowych i wstaw do docelowej tabeli
+                foreach ($daneZrodlowe as $dane) {
+                    DB::table('profilers')->insert([
+                        'word_id' => $dane->id,
+                        'word_nrzestawu' => $dane->nrzestawu,
+                        // Dodaj pozostałe kolumny, jeśli są
+                    ]);
+                }
 
-        //  foreach ($users as $user) {
-        //     DB::table('profilers')->insert([
-        //         //  'user_id' => $user->id,
-        //         //  'slowka' => 'Numer usera to: '.$user->id,
-        //          DB::statement('ALTER TABLE profilers ADD u'.$user->id.' text'),
-        //      ]);
-        //  }
-        $ile = 0;
 
-         foreach ($users as $user) {
-            $columnName = 'u'.$user->id;
-            ++$ile;
 
-            // Sprawdzamy, czy kolumna już istnieje
-            if (!Schema::hasColumn('profilers', $columnName)) {
-                // Jeśli nie istnieje, dodajemy nową kolumnę
-                Schema::table('profilers', function ($table) use ($columnName) {
-                    $table->text($columnName)->nullable();
-                });
+
+                $columnName = 'u'.$user->id;
+                ++$ile;
+
+                // Sprawdzamy, czy kolumna już istnieje
+                if (!Schema::hasColumn('profilers', $columnName)) {
+                    // Jeśli nie istnieje, dodajemy nową kolumnę
+                    Schema::table('profilers', function ($table) use ($columnName) {
+                        $table->text($columnName)->nullable()->default(null);
+                    });
+                    DB::table('profilers')->update([$columnName => 'wartosc_danych']);
+                }
             }
 
-// //wstawia przykładowe dane w pierwszym wierszu tablicy/////////////////////
-//             if($ile == 1){
-//                 // Teraz możemy wstawić dane do tej kolumny
-//                 DB::table('profilers')->insert([
-//                     'id' => 1,  // Ustaw ID na 1
-//                     $columnName => 'wartosc_dla_'.$columnName,
-//                     // Dodaj inne kolumny, jeśli są potrzebne
-//                 ]);
-//             }else{
-//                 DB::table('profilers')->where('id', 1)->update([
-//                     $columnName => 'słowo_' . $words,
-//                     // Dodaj inne kolumny, jeśli są potrzebne
-//                 ]);
+//         // Dodaj przykładowe dane dla powiązanej tabeli dla każdego użytkownika
+//          $users = User::all();
+//         //  $words = Word::count();
+
+//         //  foreach ($users as $user) {
+//         //     DB::table('profilers')->insert([
+//         //         //  'user_id' => $user->id,
+//         //         //  'slowka' => 'Numer usera to: '.$user->id,
+//         //          DB::statement('ALTER TABLE profilers ADD u'.$user->id.' text'),
+//         //      ]);
+//         //  }
+//         $ile = 0;
+
+//          foreach ($users as $user) {
+//             $columnName = 'u'.$user->id;
+//             ++$ile;
+
+//             // Sprawdzamy, czy kolumna już istnieje
+//             if (!Schema::hasColumn('profilers', $columnName)) {
+//                 // Jeśli nie istnieje, dodajemy nową kolumnę
+//                 Schema::table('profilers', function ($table) use ($columnName) {
+//                     $table->text($columnName)->nullable();
+//                 });
 //             }
-// /////////////////////////////////////////////////////////////////////////////
-            // DB::table('profilers')->insertOrIgnore([
-            //     'id' => 1,
-            //     $columnName => 'wartosc_dla_' . $columnName,
-            //     // Dodaj inne kolumny, jeśli są potrzebne
-            // ]);
-        }
-// //to niżej dodaje wiersze do tablicy, tyle ile wierszy w tablicy words//////////////
-//         // Pętla dodająca dane do bazy
-//         for ($i = 1; $i <= $words; $i++) {
+
+// // //wstawia przykładowe dane w pierwszym wierszu tablicy/////////////////////
+// //             if($ile == 1){
+// //                 // Teraz możemy wstawić dane do tej kolumny
+// //                 DB::table('profilers')->insert([
+// //                     'id' => 1,  // Ustaw ID na 1
+// //                     $columnName => 'wartosc_dla_'.$columnName,
+// //                     // Dodaj inne kolumny, jeśli są potrzebne
+// //                 ]);
+// //             }else{
+// //                 DB::table('profilers')->where('id', 1)->update([
+// //                     $columnName => 'słowo_' . $words,
+// //                     // Dodaj inne kolumny, jeśli są potrzebne
+// //                 ]);
+// //             }
+// // /////////////////////////////////////////////////////////////////////////////
+//             // DB::table('profilers')->insertOrIgnore([
+//             //     'id' => 1,
+//             //     $columnName => 'wartosc_dla_' . $columnName,
+//             //     // Dodaj inne kolumny, jeśli są potrzebne
+//             // ]);
+//         }
+// // //to niżej dodaje wiersze do tablicy, tyle ile wierszy w tablicy words//////////////
+// //         // Pętla dodająca dane do bazy
+// //         for ($i = 1; $i <= $words; $i++) {
+// //             DB::table('profilers')->insert([
+// //                 'word_id' => $i,
+// //             ]);
+// //         }
+//             // $words = Word::all();
+//             // foreach ($words as $word) {
+//                 // DB::table('profilers')->insert([
+//                 //     // 'word_id' => $word->id,
+//                 //     'word_nrzestawu' => 3,
+//                 // ]);
+//             // }
+
+//             // Iteruj po danych źródłowych i wstaw do docelowej tabeli
+
+//         // Pobierz dane z źródłowej tabeli
+//         $daneZrodlowe = DB::table('words')->select('id', 'nrzestawu')->get();
+//         // Iteruj po danych źródłowych i wstaw do docelowej tabeli
+//         foreach ($daneZrodlowe as $dane) {
 //             DB::table('profilers')->insert([
-//                 'word_id' => $i,
+//                 'word_id' => $dane->id,
+//                 'word_nrzestawu' => $dane->nrzestawu,
+//                 // Dodaj pozostałe kolumny, jeśli są
 //             ]);
 //         }
-            // $words = Word::all();
-            // foreach ($words as $word) {
-                // DB::table('profilers')->insert([
-                //     // 'word_id' => $word->id,
-                //     'word_nrzestawu' => 3,
-                // ]);
-            // }
+// // ////////////////////////////////////////////////////////////////////////////////////
+//         // DB::table('profilers')->insert([
+//         //     'user_id' => 2,
+//         //     'slowka' => 'coś tam',
+//         // ]);
 
-            // Iteruj po danych źródłowych i wstaw do docelowej tabeli
+//         // DB::statement('ALTER TABLE profilers ADD test text');
 
-        // Pobierz dane z źródłowej tabeli
-        $daneZrodlowe = DB::table('words')->select('id', 'nrzestawu')->get();
-        // Iteruj po danych źródłowych i wstaw do docelowej tabeli
-        foreach ($daneZrodlowe as $dane) {
-            DB::table('profilers')->insert([
-                'word_id' => $dane->id,
-                'word_nrzestawu' => $dane->nrzestawu,
-                // Dodaj pozostałe kolumny, jeśli są
-            ]);
-        }
-// ////////////////////////////////////////////////////////////////////////////////////
-        // DB::table('profilers')->insert([
-        //     'user_id' => 2,
-        //     'slowka' => 'coś tam',
-        // ]);
-
-        // DB::statement('ALTER TABLE profilers ADD test text');
-
-        // \App\Models\Profiler::factory(5)->create();
+//         // \App\Models\Profiler::factory(5)->create();
     }
 }
