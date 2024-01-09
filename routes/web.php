@@ -37,11 +37,13 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('products', App\Http\Controllers\ProductController::class);
         Route::resource('words', App\Http\Controllers\WordController::class);
         Route::get('/usunzestaw', 'App\Http\Controllers\SlowkaController@usunzestaw')->name('slowka.usunzestaw');
+        Route::resource('usertab', App\Http\Controllers\WordController::class);
     });
 
     Route::middleware(['admin'])->group(function () {
         Route::get('/users', 'App\Http\Controllers\UserController@index')->name('admin.users.index');
         Route::get('/users/{user_id}/approve', 'App\Http\Controllers\UserController@approve')->name('admin.users.approve');
+        Route::get('/users/{user_id}/notapprove', 'App\Http\Controllers\UserController@approve')->name('admin.users.notapprove');
     });
 });
 

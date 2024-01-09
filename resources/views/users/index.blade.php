@@ -48,7 +48,16 @@
 
         @if (!$user->approved_at)
             <a href="{{ route('admin.users.approve', $user->id) }}"
-                class="btn btn-primary btn-sm">Approve</a>
+                class="btn btn-primary btn-sm">Zatwierdź</a>
+        @else
+            <a href="{{ route('admin.users.notapprove', $user->id) }}"
+
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
+                <label class="form-check-label" for="flexCheckCheckedDisabled">
+
+                </label>
+            </div>
         @endif
     </td>
     <td>

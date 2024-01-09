@@ -5,10 +5,10 @@
 <div class="row">
     <div class="col-lg-12 margin-tb">
         <div class="pull-left">
-            <h2>Edit New User</h2>
+            <h2>Edycja użytkownika</h2>
         </div>
         <div class="pull-right">
-            <a class="btn btn-primary" href="{{ route('users.index') }}"> Back </a>
+            <a href="{{ URL::previous() }}" class="btn btn-primary">Wróć</a>
         </div>
     </div>
 </div>
@@ -40,6 +40,36 @@
             {!! Form::text('email', null, array('placeholder' => 'Email','class' => 'form-control')) !!}
         </div>
     </div>
+
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="form-group">
+            @if(!empty($user->email_verified_at))
+                {!! Form::checkbox('email_verified_at', 1, true, ['class' => 'form-check-input']) !!}
+            @else
+                {!! Form::checkbox('email_verified_at', 1, false, ['class' => 'form-check-input']) !!}
+            @endif
+                <strong>Zweryfikowany mail</strong>
+                @if(!empty($user->email_verified_at)){
+                    {{ $user->email_verified_at }}
+                }
+                @endif
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="form-group">
+            @if(!empty($user->approved_at))
+                {!! Form::checkbox('approved_at', 1, true, ['class' => 'form-check-input']) !!}
+            @else
+                {!! Form::checkbox('approved_at', 1, false, ['class' => 'form-check-input']) !!}
+            @endif
+                <strong>Zatwierdzony</strong>
+                @if(!empty($user->approved_at)){
+                    {{ $user->approved_at }}
+                }
+                @endif
+        </div>
+    </div>
+
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Password:</strong>
@@ -59,7 +89,7 @@
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Zapisz</button>
     </div>
 </div>
 {!! Form::close() !!}

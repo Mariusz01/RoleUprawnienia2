@@ -56,7 +56,7 @@
                                     <a class="nav-link dropdown-toggle"  role="button" data-bs-toggle="dropdown"
                                         aria-haspopup="true" aria-expanded="false" v-pre>Manage Users</a>
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="{{ route('admin.users.index') }}">Użytkownicy do zatwierdzenia</a>
+                                        {{-- <a class="dropdown-item" href="{{ route('admin.users.index') }}">Użytkownicy do zatwierdzenia</a> --}}
                                         <a class="dropdown-item" href="{{ route('admin.users.index') }}">Użytkownicy</a>
                                     </div>
                                 </li>

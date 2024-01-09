@@ -17,8 +17,8 @@ class Word extends Model
     ];
 
 
-    public function profiler()
-    {
-        return $this->hasOne(Profiler::class);
-    }
+    // public function profiler()
+    // {
+    //     return $this->hasOne(Profiler::class);
+    // }
 }

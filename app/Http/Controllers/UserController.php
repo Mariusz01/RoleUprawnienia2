@@ -12,6 +12,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
+
 class UserController extends Controller
 {
     /**
@@ -59,7 +60,7 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|same:confirm-password',
-            'roles' => 'required'
+            'roles' => ''
         ]);
 
         $input = $request->all();
@@ -68,7 +69,7 @@ class UserController extends Controller
         $user = User::create($input);
         $user->assignRole($request->input('roles'));
 
-        return redirect()->route('users.index')
+        return redirect()->route('admin.users.index')
                         ->with('success','User created successfully');
     }
 
@@ -112,14 +113,24 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email,'.$id,
             'password' => 'same:confirm-password',
-            'roles' => 'required'
+            'roles' => '',
         ]);
-
         $input = $request->all();
         if(!empty($input['password'])){
             $input['password'] = Hash::make($input['password']);
         }else{
             $input = Arr::except($input,array('password'));
+        }
+
+        if($request->has('email_verified_at')){ //kiedy true - zaznaczone
+            $input['email_verified_at'] = now();
+        }elseif(!$request->has('email_verified_at')){ //kiedy false - nie zaznaczone
+            $input['email_verified_at'] = null;
+        }
+        if($request->has('approved_at')){ //kiedy true - zaznaczone
+            $this->approve($id);
+        }elseif(!$request->has('approved_at')){ //kiedy false - nie zaznaczone
+            $this->notapprove($id);
         }
 
         $user = User::find($id);
@@ -128,8 +139,9 @@ class UserController extends Controller
 
         $user->assignRole($request->input('roles'));
 
-        return redirect()->route('users.index')
-                        ->with('success','User updated successfully');
+        $data = User::orderBy('id','ASC')->paginate(15);
+        return redirect()->route('admin.users.index', compact('data'))
+                        ->with('success','Dane '.$user->name.' o id: '.$user->id.' uaktualnione.');
     }
 
     /**
@@ -141,7 +153,10 @@ class UserController extends Controller
     public function destroy($id)
     {
         User::find($id)->delete();
-        return redirect()->route('users.index')
+
+
+        $data = User::orderBy('id','ASC')->paginate(15);
+        return redirect()->route('admin.users.index', compact('data'))
                         ->with('success','User deleted successfully');
     }
 
@@ -154,7 +169,22 @@ class UserController extends Controller
         $user->save();
 
         // return redirect()->route('admin.users.index')->withMessage('User approved successfully');
-        return redirect()->route('users.index')
+        $data = User::orderBy('id','ASC')->paginate(15);
+            return view('users.index',compact('data'))
+            ->with('success','User approved successfully');
+    }
+
+
+    public function notapprove($user_id)
+    {
+        $user = User::findOrFail($user_id);
+        // $user->update(['approved_at' => null]);
+        $user->approved_at = null;
+        $user->save();
+
+        // return redirect()->route('admin.users.index')->withMessage('User approved successfully');
+        $data = User::orderBy('id','ASC')->paginate(15);
+            return view('users.index',compact('data'))
             ->with('success','User approved successfully');
     }
 }

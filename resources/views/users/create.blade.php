@@ -5,10 +5,10 @@
 <div class="row">
     <div class="col-lg-12 margin-tb">
         <div class="pull-left">
-            <h2>Create New User</h2>
+            <h2>Tworzenie Nowego Użytkownika</h2>
         </div>
         <div class="pull-right">
-            <a class="btn btn-primary" href="{{ route('users.index') }}"> Back </a>
+            <a class="btn btn-primary" href="{{ route('admin.users.index') }}"> Back </a>
         </div>
     </div>
 </div>
@@ -16,7 +16,7 @@
 
 @if (count($errors) > 0)
   <div class="alert alert-danger">
-    <strong>Whoops!</strong>Something went wrong.<br><br>
+    <strong>Whoops!</strong> Coś poszło nie tak.<br><br>
     <ul>
        @foreach ($errors->all() as $error)
          <li>{{ $error }}</li>
@@ -41,6 +41,7 @@
             {!! Form::text('email', null, array('placeholder' => 'Email','class' => 'form-control')) !!}
         </div>
     </div>
+
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Password:</strong>

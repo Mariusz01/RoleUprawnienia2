@@ -29,6 +29,30 @@
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
+            <strong>Weryfikacja email:</strong>
+            {{ $user->email_verified_at	 }}
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="form-group">
+            <strong>Utworzony:</strong>
+            {{ $user->created_at }}
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="form-group">
+            <strong>Aktualizowany:</strong>
+            {{ $user->updated_at }}
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="form-group">
+            <strong>Zatwierdzony:</strong>
+            {{ $user->approved_at }}
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="form-group">
             <strong>Roles:</strong>
             @if(!empty($user->getRoleNames()))
             <br />
@@ -37,6 +61,8 @@
                 @endforeach
             @endif
         </div>
+
+       <a class="btn btn-primary" href="{{ route('users.edit',$user->id) }}">Edit</a>
     </div>
 </div>
 @endsection
