@@ -47,6 +47,21 @@ class User extends Authenticatable implements MustVerifyEmail
             // Tworzenie nowej tabeli dla użytkownika
             DB::statement("CREATE TABLE {$tableName} (
                 id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                word_id INT,
+                word_nrzestawu INT,
+                slowo2 TEXT,
+                znaczenie2 TEXT,
+                przyklad2 TEXT,
+                dodaj_tab TINYINT,
+                dodaj_slowo TINYINT,
+                edytuj_slowo TINYINT,
+                dalej1 TEXT,
+                dalej2 TEXT,
+                dalej3 TEXT,
+                nauka1 SMALLINT,
+                nauka2 SMALLINT,
+                nauka3 SMALLINT,
+                nauka4 SMALLINT,
                 created_at TIMESTAMP NULL,
                 updated_at TIMESTAMP NULL
             )");

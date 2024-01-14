@@ -29,7 +29,7 @@ class SlowkaController extends Controller
         $user = Auth::user();
         // Pobierz ID zalogowanego użytkownika
         $userId = $user->id;
-        $userKolumna = 'u'.$userId;
+        $userTabela = 'usertab_'.$userId;
 
         // Wyliczanie i zliczanie wystąpień dla danej kolumny
         $slowka = DB::table('words')
@@ -38,44 +38,38 @@ class SlowkaController extends Controller
         ->orderBy('nrzestawu','ASC') //kolejność
         ->get();
 
-        //dodanie nowej kolumny do zapisania danej czy tabela jest dołączona do nauki czy nie
-        $slowka->map(function($item){
-            $item->dodana = null;
-        });
+        // $slowka->map(function ($item) {
+        //     $item->dodaj_tab = false;
+        //     return $item;
+        // });
 
-        // $wyniki = Slowka::whereNotNull($userKolumna) //sprawdza aby nie była null
-        // ->groupBy('word_nrzestawu')
-        // ->select('word_nrzestawu', \DB::raw('MIN(id) as pierwszy_wiersz_id'), \DB::raw('MAX('.$userKolumna.') as user_column_value'))
-        // ->get();
+        foreach($slowka as $slowo){
+            $to = DB::table($userTabela)
+            ->where('word_nrzestawu', $slowo->nrzestawu)
+            ->where('dodaj_tab', $slowo->nrzestawu)
+            ->select('dodaj_tab')
+            ->first();
 
-        $wyniki = Slowka::groupBy('word_nrzestawu')
-        ->select('word_nrzestawu', DB::raw('MIN(id) as pierwszy_wiersz_id'), DB::raw('MAX('.$userKolumna.') as user_column_value'))
-        ->get();
-
-        //pobrać po jednym z każdego zestawu i prawdzić czy jest +
-        foreach ($wyniki as $zestaw) {
-            $slowko = $slowka->where('nrzestawu', $zestaw->word_nrzestawu)->first();
-            if ($slowko) {
-                $slowko->dodana = (isset($zestaw->user_column_value) && str_contains($zestaw->user_column_value, ";;dodac=+;;")) ? 1 : 0;
+            // to musi być kiedy przechodzi z innego to tego widoku czyli np. z create
+            if(empty($to) || $to === false){
+                $slowo->dodaj_tab = false;
+            }else{
+                $slowo->dodaj_tab = true;
             }
-            // if(str_contains($zestaw->user_column_value, ";;dodac=+;;")){
-            //     $slowko->dodana = 1;
-            // }elseif(str_contains($zestaw->user_column_value, ";;dodac=-;;") || $zestaw->user_column_value == null){
-            //     $slowko->dodana = 0;
-            // }
         }
 
-        return view('slowka.index',compact('slowka','wyniki'));
+        return view('slowka.index',compact('slowka'));
     }
 
     /**
      * Show the form for creating a new resource.
+     * index - dodanie i usunięcie tabeli
      */
     public function create(Request $request)
     {
         request()->validate([
             'nrzestawu' => 'required|numeric',
-            'dodaj' => 'required|numeric',
+            'dodaj' => 'required|numeric', // 1 i 2 jest z index
         ]);
         $nrzestawu = $request->nrzestawu;
         $dodaj = $request->dodaj;
@@ -84,94 +78,117 @@ class SlowkaController extends Controller
         $user = Auth::user();
         // Pobierz ID zalogowanego użytkownika
         $userId = $user->id;
-        $userKolumna = 'u'.$userId;
+        $userTabela = 'usertab_'.$userId;
+/////////////////////////////////////////////////////
+        if($dodaj == 2){//dodaj zestaw do nauki
+            //pobranie tablicy words
+            $slowka2 = DB::table('words')
+            ->where('nrzestawu', $nrzestawu)
+            ->select(
+                'id',
+                'nrzestawu',
+                'slowo',
+                'znaczenie',
+                'przyklad',
+            )
+            ->get();
 
-        //uaktualnienie danych w tablicy profilers dla danego użytkownia (kolumny)
-        // Slowka::where('word_nrzestawu', $nrzestawu)->update([$userKolumna => ";;b;;",]);
+            foreach($slowka2 as $word1){
+                $edytowane = DB::table($userTabela)
+                ->where('word_id', $word1->nrzestawu)
+                ->select('edytuj_slowo')
+                ->first();
 
-        if($dodaj === '1'){
-            // Zeby dodawało dodać=+ ale nie kasowało reszty
-            $slowo2 = Slowka::where('word_nrzestawu', $nrzestawu)->select('id','word_id','word_nrzestawu',$userKolumna)->get();
-            foreach($slowo2 as $slowo1){
-                if($slowo1->$userKolumna === null || empty($slowo1->$userKolumna)){
-                    Slowka::where('id',$slowo1->id)->update([
-                        $userKolumna => ";;dodac=+;;",
-                        // $user => ';;dodac=+;;ktora=c;;slowo='.$dane['slowo'].';;znaczenie='.$dane['znaczenie'].';;przyklad='.$dane['przyklad'].';;',
-                    ]);
-                }elseif(str_contains($slowo1->$userKolumna, "dodac=-")){
-                    $tablica = explode(";;", $slowo1->$userKolumna);
-                    //tworzenie tablicy asocjacyjnej/////////////////////
-                    $tablica2 = array();
-                    foreach($tablica as $to){
-                        if(!empty($to) && $to != null){
-                            $exploded = explode("=", $to);
-
-                            // Sprawdzenie, czy explode zwróciło wystarczającą ilość elementów
-                            if (count($exploded) === 2) {
-                                list($key, $value) = $exploded;
-                                $tablica2[$key] = $value;
-                            }
-                        }
-                    }
-
-                    if(!empty($tablica2->slowo)) $to->slowo = $tablica2['slowo'];
-                    if(!empty($tablica2->znaczenie)) $to->znaczenie = $tablica2['znaczenie'];
-                    if(!empty($tablica2->przyklad)) $to->przyklad = $tablica2['przyklad'];
-                    if(!empty($tablica2->ktora)) $to->edytuj = $tablica2['ktora'];
-                    if(!empty($tablica2->dodac)) $to->dodac = $tablica2['dodac'];
-
-                    //konwersja na string/////////////////////////////
-                    $string_output = implode(";;", array_map(function($key, $value){
-                        return "$key=$value";
-                    }, array_keys($tablica2), $tablica2));
-                    ////////////////////////////////////////////////////
-                    Slowka::where('id',$slowo1->id)->update([
-                        $userKolumna => $string_output,
-                    ]);
-                }elseif(!str_contains($slowo1->$userKolumna, "dodac=+")){
-                    //tak było naprościej zrobić
-                    $string_output = ";;dodac=+;;".$slowo1->$userKolumna;
-
-                    Slowka::where('id',$slowo1->id)->update([
-                        $userKolumna => $string_output,
-                    ]);
-
+                if(!$edytowane){//jeśli było edytowane przed dodaniem zestawu do nauki
+                    DB::table($userTabela)->updateOrInsert(
+                        ['word_id' => $word1->id], // Warunki filtrujące
+                        ['word_nrzestawu' => $word1->nrzestawu,'word_id' => $word1->id, 'dodaj_tab' => $word1->nrzestawu]
+                    );
+                }else{
+                    DB::table($userTabela)->updateOrInsert(
+                        ['word_id' => $word1->id], // Warunki filtrujące
+                        ['word_nrzestawu' => $word1->nrzestawu,'word_id' => $word1->id, 'slowo2' => null,'znaczenie2'=>null,
+                            'przyklad2' => null, 'dodaj_tab' => $word1->nrzestawu]
+                    );
                 }
+
+
             }
-            // Wyliczanie i zliczanie wystąpień dla danej kolumny
             $slowka = DB::table('words')
             ->selectRaw('nrzestawu, COUNT(nrzestawu) as occurrences') //liczy ile wystąpień dla każdego zestawu
             ->groupBy('nrzestawu') //wyniki są grupowane według zestawu
             ->orderBy('nrzestawu','ASC') //kolejność
             ->get();
 
-            //dodanie nowej kolumny do zapisania danej czy tabela jest dołączona do nauki czy nie
-            $slowka->map(function($item){
-                $item->dodana = null;
-            });
-            $wyniki = Slowka::groupBy('word_nrzestawu')
-            ->select('word_nrzestawu', DB::raw('MIN(id) as pierwszy_wiersz_id'), DB::raw('MAX('.$userKolumna.') as user_column_value'))
+            //to z index
+            foreach($slowka as $slowo){
+                $to = DB::table($userTabela)
+                ->where('dodaj_tab', $slowo->nrzestawu)
+                ->select('dodaj_tab')
+                ->first();
+
+                // to musi być kiedy przechodzi z innego to tego widoku czyli np. z create
+                if(empty($to) || $to === false){
+                    $slowo->dodaj_tab = 0;
+                }else{
+                    $slowo->dodaj_tab = $to;
+                }
+            }
+        }elseif($dodaj == 1){
+            //pobranie tablicy words
+            $slowka2 = DB::table('words')
+            ->where('nrzestawu', $nrzestawu)
+            ->select(
+                'id',
+                'nrzestawu',
+                'slowo',
+                'znaczenie',
+                'przyklad',
+            )
+            ->get();
+            //to jest raczej do usunięcia wszystkich wierdszy które mają word_nrzestawu
+            foreach($slowka2 as $word1){
+                $raz = DB::table($userTabela)
+                ->where('word_id', $word1->id)
+                ->first();
+                if(!empty($raz->dodaj_slowo) && $raz->dodaj_slowo != null){// jeśli jest dodany to tylko zaktualizować, albo nic
+                    DB::table($userTabela)->updateOrInsert(
+                        ['word_id' => $word1->id], // Warunki filtrujące
+                        ['word_nrzestawu' => $word1->nrzestawu,'word_id' => $word1->id, 'slowo2' => null,'znaczenie2'=>null,
+                            'przyklad2' => null, 'dodaj_tab' => null]
+                    );
+                }else{
+                    // usunięcie wiersza
+                    DB::table($userTabela)->where('word_id', $word1->id)->delete();
+                }
+            }
+
+
+
+            $slowka = DB::table('words')
+            ->selectRaw('nrzestawu, COUNT(nrzestawu) as occurrences') //liczy ile wystąpień dla każdego zestawu
+            ->groupBy('nrzestawu') //wyniki są grupowane według zestawu
+            ->orderBy('nrzestawu','ASC') //kolejność
             ->get();
 
-            //pobrać po jednym z każdego zestawu i prawdzić czy jest +
-            foreach ($wyniki as $zestaw) {
-                $slowko = $slowka->where('nrzestawu', $zestaw->word_nrzestawu)->first();
-                if ($slowko) {
-                    $slowko->dodana = (isset($zestaw->user_column_value) && str_contains($zestaw->user_column_value, "dodac=+")) ? 1 : 0;
+            //to z index
+            foreach($slowka as $slowo){
+                $to = DB::table($userTabela)
+                ->where('dodaj_tab', $slowo->nrzestawu)
+                ->select('dodaj_tab')
+                ->first();
+
+                // to musi być kiedy przechodzi z innego to tego widoku czyli np. z create
+                if(empty($to) || $to === false){
+                    $slowo->dodaj_tab = 0;
+                }else{
+                    $slowo->dodaj_tab = $to;
                 }
-                // if(str_contains($zestaw->user_column_value, ";;dodac=+;;")){
-                //     $slowko->dodana = 1;
-                // }elseif(str_contains($zestaw->user_column_value, ";;dodac=-;;") || $zestaw->user_column_value == null){
-                //     $slowko->dodana = 0;
-                // }
             }
-        }elseif($dodaj === 2){//skończyć, jeśli w liście słówek usuniemy jakieś
-            // //pobranie slowka
-            // $slowo1 = Slowka::where('id',$nrzestawu)->select('id', 'word_id', $userKolumna)->first();
-            // $slowkojeden = $slowo1->$userKolumna;
-            // //jak jest - to zmiana na +, jeśli nic to nic - tzn że nie była dodana tablicca zawierająca to słówko
         }
-        return view('slowka.index', compact('slowka','wyniki'));
+/////////////////////////////////////////////////////
+
+        return view('slowka.index', compact('slowka'));
 
     }
 
@@ -192,93 +209,35 @@ class SlowkaController extends Controller
         $user = Auth::user();
         // Pobierz ID zalogowanego użytkownika
         $userId = $user->id;
-        $userKolumna = 'u'.$userId;
+        $userTabela = 'usertab_'.$userId;
+
+        // $liczbaRekordow = DB::table($userTabela)->count();
 
         $tab_slowka = DB::table('words')
-            ->where('words.nrzestawu', $nrzestawu)
-            ->leftJoin('profilers', 'profilers.word_id', '=', 'words.id')
-            // ->where('profilers.'.$userKolumna, '=', ';;ktora=c;;') // Poprawka warunku
-            ->select(
-                'words.id',
-                'words.nrzestawu',
-                'words.slowo',
-                'words.znaczenie',
-                'words.przyklad',
-                'profilers.'.$userKolumna, // Nadanie unikalnej nazwy kolumnie z profilers
-                // 'profilers.word_id',
-                // 'profilers.word_nrzestawu',
-            )
-            ->get();
+        ->where('words.nrzestawu', $nrzestawu)
+        ->leftJoin($userTabela, $userTabela.'.word_id', '=', 'words.id')
+        ->select(
+            'words.id',
+            'words.nrzestawu',
+            'words.slowo',
+            'words.znaczenie',
+            'words.przyklad',
+            $userTabela.'.dodaj_tab',
+            $userTabela.'.slowo2',
+            $userTabela.'.znaczenie2',
+            $userTabela.'.przyklad2',
+            $userTabela.'.edytuj_slowo',
+        )
+        ->paginate(15);
 
-        //dodanie nowych kolumn, bez zapisu do bazy
-        $tab_slowka->map(function ($item) {
-            $item->edytuj = null;
-            $item->dodac = null;
-            return $item;
-        });
 
-        foreach($tab_slowka as $to){
-            if (!empty($to->$userKolumna)) {
-                $tablica = explode(";;", $to->$userKolumna);
-                //tworzenie tablicy asocjacyjnej/////////////////////
-                $tablica2 = [];
-                foreach($tablica as $ten){
-                    if(!empty($ten) && $ten != null){
-                        $exploded = explode("=", $ten);
-
-                        // Sprawdzenie, czy explode zwróciło wystarczającą ilość elementów
-                        if (count($exploded) === 2) {
-                            list($key, $value) = $exploded;
-                            $tablica2[$key] = $value;
-                        }
-                    }
-                }
-                // są wpisane więc zastępuje nowymi danymi
-                if(!empty($tablica2['slowo'])) $to->slowo = $tablica2['slowo'];
-                if(!empty($tablica2['znaczenie'])) $to->znaczenie = $tablica2['znaczenie'];
-                if(!empty($tablica2['przyklad'])) $to->przyklad = $tablica2['przyklad'];
-                // wypełnienie dodatkowych kolumn
-                if(!empty($tablica2['ktora'])) $to->edytuj = $tablica2['ktora'];
-                if(!empty($tablica2['dodac'])) $to->dodac = $tablica2['dodac'];
-            }
-            // elseif(!empty($to->$userKolumna) && str_contains($to->$userKolumna, ";;-;;")){
-            //     // używasz DB::table, co oznacza, że otrzymujesz wyniki jako kolekcję, a nie model Eloquent.
-            //     //poniższy kod używa metody filter, aby pozostawić tylko te elementy, których id nie jest równy id z bieżącej iteracji ($to->id).
-            //     // $tab_slowka = $tab_slowka->filter
-
-            //     $tablica = explode(";;", $to->$userKolumna);
-            //     //tworzenie tablicy asocjacyjnej/////////////////////
-            //     $tablica2 = [];
-            //     foreach($tablica as $ten){
-            //         if(!empty($ten) && $ten != null){
-            //             $exploded = explode("=", $ten);
-
-            //             // Sprawdzenie, czy explode zwróciło wystarczającą ilość elementów
-            //             if (count($exploded) === 2) {
-            //                 list($key, $value) = $exploded;
-            //                 $tablica2[$key] = $value;
-            //             }
-            //         }
-            //     }
-            //     // Sprawdzamy, czy kolumna $nowaKolumna już istnieje w obiekcie
-            //     if (property_exists($tablica2, $nowaKolumna)) {
-            //         // Jeśli istnieje, zmieniamy jej zawartość
-            //         $tablica2->$nowaKolumna = 'Nowa zawartość'; // Tutaj możesz podać właściwą nową zawartość
-            //     } else {
-            //         // Jeśli nie istnieje, dodajemy nową kolumnę do obiektu z danymi
-            //         $tablica2->$nowaKolumna = 'Nowe dane'; // Tutaj możesz podać właściwe dane do dodania
-            //     }
-            // }
-
-        }
-        //dodanie nowego rekordu dla sprawdzenia czy słowo usunięte czy nie
-
-        return view('slowka.show',compact('tab_slowka', 'nrzestawu', 'userKolumna'));
-            // ->with('i', ($request->input('page', 1) - 1) * 15);
+        return view('slowka.show',compact('tab_slowka', 'nrzestawu', 'userTabela'));
+        // ->with('i', ($request->input('page', 1) - 1) * 15);
     }
 
     /**
      * Show the form for editing the specified resource.
+     * z index
      */
     public function edit($id)
     {
@@ -287,252 +246,160 @@ class SlowkaController extends Controller
         $user = Auth::user();
         // Pobierz ID zalogowanego użytkownika
         $userId = $user->id;
-        $userKolumna = 'u'.$userId;
+        $userTabela = 'usertab_'.$userId;
 
-        // $word = Slowka::where('word_id', $id)->select('id','word_id','word_nrzestawu',$userKolumna)->first();
-        // $word = DB::table('words')
-        //     ->leftJoin('profilers', 'profilers.word_id', '=', 'words.id')
-        //     ->where('words.id', $id)
-        //     ->where(function ($query) use ($userKolumna) {
-        //         $query->whereNull('profilers.'.$userKolumna)
-        //             ->orWhere('profilers.'.$userKolumna, 'LIKE', '%;;ktora=c;;%');
-        //     })
-        //     ->select(
-        //         'words.id',
-        //         'words.nrzestawu',
-        //         'words.slowo',
-        //         'words.znaczenie',
-        //         'words.przyklad',
-        //         'profilers.'.$userKolumna // Dołączenie kolumny z profilers
-        //     )
-        //     ->first();
+        $word = DB::table('words')
+        ->where('words.id', $id)
+        ->leftJoin($userTabela, 'words.id', '=', $userTabela.'.word_id')
+        ->select(
+            'words.id',
+            'words.nrzestawu',
+            'words.slowo',
+            'words.znaczenie',
+            'words.przyklad',
+            $userTabela.'.word_nrzestawu',
+            $userTabela.'.slowo2',
+            $userTabela.'.znaczenie2',
+            $userTabela.'.przyklad2',
+            $userTabela.'.edytuj_slowo',
+            $userTabela.'.dodaj_tab',
+            $userTabela.'.dodaj_slowo',
+        )
+        ->first();
 
-            // $word = DB::table('words')
-            // ->where('words.nrzestawu', $nrzestawu)
-            // ->leftJoin('profilers', 'profilers.word_id', '=', 'words.id')
-            // // ->where('profilers.'.$userKolumna, '=', ';;ktora=c;;') // Poprawka warunku
-            // ->select(
-            //     'words.id',
-            //     'words.nrzestawu',
-            //     'words.slowo',
-            //     'words.znaczenie',
-            //     'words.przyklad',
-            //     'profilers.'.$userKolumna // Nadanie unikalnej nazwy kolumnie z profilers
-            // )
-            // ->first();
+        if($word->edytuj_slowo){
+            $word->slowo = $word->slowo2;
+            $word->znaczenie = $word->znaczenie2;
+            $word->przyklad = $word->przyklad2;
+        }
 
-            $word = DB::table('words')
-            ->where('words.id', $id)
-            ->leftJoin('profilers', 'words.id', '=', 'profilers.word_id')
-            ->select(
-                'words.id',
-                'words.nrzestawu',
-                'words.slowo',
-                'words.znaczenie',
-                'words.przyklad',
-                'profilers.'.$userKolumna // Nadanie unikalnej nazwy kolumnie z profilers
-            )
-            ->first();
-
-            if (!empty($word->$userKolumna) && str_contains($word->$userKolumna, ";;ktora=c;;")) {
-                $tablica = explode(";;", $word->$userKolumna);
-                //tworzenie tablicy asocjacyjnej/////////////////////
-                $tablica2 = [];
-                foreach($tablica as $ten){
-                    if(!empty($ten)){
-                        $exploded = explode("=", $ten);
-
-                        // Sprawdzenie, czy explode zwróciło wystarczającą ilość elementów
-                        if (count($exploded) === 2) {
-                            list($key, $value) = $exploded;
-                            $tablica2[$key] = $value;
-                        }
-                    }
-                }
-                // są wpisane więc zastępuje nowymi danymi
-                $word->slowo = $tablica2['slowo'];
-                $word->znaczenie = $tablica2['znaczenie'];
-                $word->przyklad = $tablica2['przyklad'];
-            }
-            $nrzestawu = $word->nrzestawu;
-
-        return view('slowka.edit',compact('word','userKolumna'));
+        return view('slowka.edit',compact('word'));
 
     }
 
     /**
      * Update the specified resource in storage.
+     * edit
+     *
      */
     public function update(Request $request, $id)
     {
         request()->validate([
-            'nrzestawu' => 'required|numeric',
+            'coupdate' => 'required|string',
+            'nrzestawu',
             'slowo' => 'required|string',
             'znaczenie' => 'required|string',
             'przyklad' => 'string',
+            'edytuj_slowo',
+            'dodaj_tab',
         ]);
         $dane = $request->all();
-        $userKolumna = $dane['ipus'];
+        // Pobierz zalogowanego użytkownika
+        $user = Auth::user();
+        // Pobierz ID zalogowanego użytkownika
+        $userId = $user->id;
+        $userTabela = 'usertab_'.$userId;
 
-        $slowo1 = Slowka::where('word_id', $id)->select('id','word_id','word_nrzestawu',$userKolumna)->first();
-        if($slowo1->$userKolumna === null || empty($slowo1->$userKolumna)){
-            Slowka::where('id',$id)->update([
-                'word_nrzestawu' => $dane['nrzestawu'],
-                $userKolumna => ';;ktora=c;;slowo='.$dane['slowo'].';;znaczenie='.$dane['znaczenie'].';;przyklad='.$dane['przyklad'].';;',
-            ]);
-        }else{
-            if(str_contains($slowo1->$userKolumna, "dodac=+;;")){
-                $tablica = explode(";;", $slowo1->$userKolumna);
-                //tworzenie tablicy asocjacyjnej/////////////////////
-                $tablica2 = array();
-                foreach($tablica as $to){
-                    if(!empty($to) && $to != null){
-                        $exploded = explode("=", $to);
-
-                        // Sprawdzenie, czy explode zwróciło wystarczającą ilość elementów
-                        if (count($exploded) === 2) {
-                            list($key, $value) = $exploded;
-                            $tablica2[$key] = $value;
-                        }
-                    }
-                }
-
-                $tablica2['dodac'] = '+';
-                $tablica2['ktora'] = 'c';
-                $tablica2['slowo'] = $dane['slowo'];
-                $tablica2['znaczenie'] = $dane['znaczenie'];
-                $tablica2['przyklad'] = $dane['przyklad'];
-                //konwersja na string/////////////////////////////
-                $string_output = ";;".implode(";;", array_map(function($key, $value){
-                    return "$key=$value";
-                }, array_keys($tablica2), $tablica2)).";;";
-                ////////////////////////////////////////////////////
-                Slowka::where('id',$id)->update([
-                    'word_nrzestawu' => $dane['nrzestawu'],
-                    $userKolumna => $string_output,
+        if($dane['coupdate'] === 'uzytkownika'){
+            $existingRecord = DB::table($userTabela)->where('id', $id)->first();
+            if ($existingRecord) {
+                // Rekord istnieje, wykonaj aktualizację zamiast wstawiania
+                DB::table($userTabela)->where('id', $id)->update([
+                    'word_id' => $dane['word_id'],
+                    'word_nrzestawu' => $dane['word_nrzestawu'],
+                    'dodaj_tab' => $dane['dodaj_tab'],
+                    'dodaj_slowo' => $dane['dodaj_slowo'],
+                    'slowo2' => $dane['slowo'],
+                    'znaczenie2' => $dane['znaczenie'],
+                    'przyklad2' => $dane['przyklad'],
+                    'edytuj_slowo' => true,
                 ]);
-            }else{
-                $tablica = explode(";;", $slowo1->$userKolumna);
-                //tworzenie tablicy asocjacyjnej/////////////////////
-                $tablica2 = array();
-                foreach($tablica as $to){
-                    if(!empty($to) && $to != null){
-                        $exploded = explode("=", $to);
-
-                        // Sprawdzenie, czy explode zwróciło wystarczającą ilość elementów
-                        if (count($exploded) === 2) {
-                            list($key, $value) = $exploded;
-                            $tablica2[$key] = $value;
-                        }
-                    }
-                }
-
-                // $tablica2['dodac'] = '+';
-                $tablica2['ktora'] = 'c';
-                $tablica2['slowo'] = $dane['slowo'];
-                $tablica2['znaczenie'] = $dane['znaczenie'];
-                $tablica2['przyklad'] = $dane['przyklad'];
-                //konwersja na string/////////////////////////////
-                $string_output = implode(";;", array_map(function($key, $value){
-                    return "$key=$value";
-                }, array_keys($tablica2), $tablica2));
-                ////////////////////////////////////////////////////
-                Slowka::where('id',$id)->update([
-                    'word_nrzestawu' => $dane['nrzestawu'],
-                    $userKolumna => $string_output,
+            } else {
+                // Rekord nie istnieje, wykonaj wstawianie
+                DB::table($userTabela)->insert([
+                    'id' => $id,
+                    'word_id' => $dane['word_id'],
+                    'word_nrzestawu' => $dane['word_nrzestawu'],
+                    'dodaj_tab' => $dane['dodaj_tab'],
+                    'dodaj_slowo' => $dane['dodaj_slowo'],
+                    'slowo2' => $dane['slowo'],
+                    'znaczenie2' => $dane['znaczenie'],
+                    'przyklad2' => $dane['przyklad'],
+                    'edytuj_slowo' => true,
                 ]);
             }
         }
 
-        //konwersja na string/////////////////////////////
-        // $string_output = implode(";;", array_map(function($key, $value){
-        //     return "$key=$value";
-        // }, array_keys($tablica2), $tablica2));
-        ////////////////////////////////////////////////////
-
-
-
-        return redirect()->route('slowka.edit', ['slowka' => $id])
+        return redirect()->route('slowka.edit', [$id])
                         ->with('success','Słowo zostało zaktualizowane');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+
+        $dane = $request->all();
         // Pobierz zalogowanego użytkownika
         $user = Auth::user();
         // Pobierz ID zalogowanego użytkownika
         $userId = $user->id;
-        $userKolumna = 'u'.$userId;
+        $userTabela = 'usertab_'.$userId;
+        $nrzestawu = $dane['nrzestawu'];
 
-        // $slowo = Slowka::where('id',$id);
-        // $slowo->$userKolumna = ';;-;;';
-        // $slowo->save();
-        $nrzestawu1 = Slowka::where('word_id', $id)->select('word_nrzestawu')->first();
-        $nrzestawu = $nrzestawu1->word_nrzestawu;
-        // $nrzestawu = $nrzestawu->word_nrzestawu;
-        // Przykład z użyciem updateOrInsert:
-        Slowka::updateOrInsert(
-            ['id' => $id],
-            [$userKolumna => ';;dodac=-;;']
-        );
+        if($dane['destroy'] === 'show1'){
+            DB::table($userTabela)
+            ->where('word_id', $id)->update([
+                'slowo2' => null,
+                'znaczenie2' => null,
+                'przyklad2' => null,
+                'dodaj_tab' => null,
+                'dodaj_slowo' => null,
+                'edytuj_slowo' => null,
+                'dalej1' => null,
+                'dalej2' => null,
+                'dalej3' => null,
+                'nauka1' => null,
+                'nauka2' => null,
+                'nauka3' => null,
+                'nauka4' => null,
+            ]);
 
-        $tab_slowka = DB::table('words')
+            $tab_slowka = DB::table('words')
             ->where('words.nrzestawu', $nrzestawu)
-            ->leftJoin('profilers', 'profilers.word_id', '=', 'words.id')
-            // ->where('profilers.'.$userKolumna, '=', ';;ktora=c;;') // Poprawka warunku
+            ->leftJoin($userTabela, $userTabela.'.word_id', '=', 'words.id')
             ->select(
                 'words.id',
                 'words.nrzestawu',
                 'words.slowo',
                 'words.znaczenie',
                 'words.przyklad',
-                'profilers.'.$userKolumna // Nadanie unikalnej nazwy kolumnie z profilers
+                $userTabela.'.dodaj_tab',
+                $userTabela.'.slowo2',
+                $userTabela.'.znaczenie2',
+                $userTabela.'.przyklad2',
+                $userTabela.'.edytuj_slowo',
             )
-            ->get();
-
-            //dodanie nowych kolumn, bez zapisu do bazy
-        $tab_slowka->map(function ($item) {
-            $item->edytuj = null;
-            $item->dodac = null;
-            return $item;
-        });
-
-        foreach($tab_slowka as $to){
-            // if (!empty($to->$userKolumna) && str_contains($to->$userKolumna, ";;ktora=c;;")) {
-                $tablica = explode(";;", $to->$userKolumna);
-                //tworzenie tablicy asocjacyjnej/////////////////////
-                $tablica2 = [];
-                foreach($tablica as $ten){
-                    if(!empty($ten) && $ten != null){
-                        $exploded = explode("=", $ten);
-
-                        // Sprawdzenie, czy explode zwróciło wystarczającą ilość elementów
-                        if (count($exploded) === 2) {
-                            list($key, $value) = $exploded;
-                            $tablica2[$key] = $value;
-                        }
-                    }
-                }
-                // są wpisane więc zastępuje nowymi danymi
-                if(!empty($tablica2['slowo'])) $to->slowo = $tablica2['slowo'];
-                if(!empty($tablica2['znaczenie'])) $to->znaczenie = $tablica2['znaczenie'];
-                if(!empty($tablica2['przyklad'])) $to->przyklad = $tablica2['przyklad'];
-                // wypełnienie dodatkowych kolumn
-                if(!empty($tablica2['ktora'])) $to->edytuj = $tablica2['ktora'];
-                if(!empty($tablica2['dodac'])) $to->dodac = $tablica2['dodac'];
-
-            // }elseif(!empty($to->$userKolumna) && str_contains($to->$userKolumna, ";;-;;")){
-            //     // używasz DB::table, co oznacza, że otrzymujesz wyniki jako kolekcję, a nie model Eloquent.
-            //     //poniższy kod używa metody filter, aby pozostawić tylko te elementy, których id nie jest równy id z bieżącej iteracji ($to->id).
-            //     $tab_slowka = $tab_slowka->filter(function ($item) use ($to) {
-            //         return $item->id !== $to->id;
-            //     });
-            // }
+            ->paginate(15);
+        }elseif($dane['destroy'] === 'show2'){// na razie nic nie robi, jest zielony w widoku show
+            $tab_slowka = DB::table('words')
+            ->where('words.nrzestawu', $nrzestawu)
+            ->leftJoin($userTabela, $userTabela.'.word_id', '=', 'words.id')
+            ->select(
+                'words.id',
+                'words.nrzestawu',
+                'words.slowo',
+                'words.znaczenie',
+                'words.przyklad',
+                $userTabela.'.dodaj_tab',
+                $userTabela.'.slowo2',
+                $userTabela.'.znaczenie2',
+                $userTabela.'.przyklad2',
+                $userTabela.'.edytuj_slowo',
+                )
+            ->paginate(15);
         }
-
 
         // ma być przekierowanie
         return view('slowka.show', compact('tab_slowka','nrzestawu'))
@@ -558,11 +425,6 @@ class SlowkaController extends Controller
             // Slowka::update(["$userKolumna" => 'test', ]);
             Slowka::where('word_nrzestawu',$nrzestawu)->update([$userKolumna => null,]);
         }
-
-
-
-
-
 
         // Wyliczanie i zliczanie wystąpień dla danej kolumny
         $slowka = DB::table('words')

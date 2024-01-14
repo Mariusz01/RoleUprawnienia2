@@ -38,9 +38,9 @@
         </div>
     @endif
 @php
-    echo '<pre>';
-    print_r($word);
-    echo '</pre>';
+    // echo '<pre>';
+    // print_r($word);
+    // echo '</pre>';
     // echo '<br /><br />';
     // // echo $word->userKolumna;
     // echo '<br /><br />';
@@ -55,30 +55,43 @@
     // echo '<br />';
 @endphp
 
-    <form action="{{ route('slowka.update',$word->id, $iduser = Auth::user()->id, Auth::user()->id) }}" method="POST">
+    <form action="{{ route('slowka.update',$word->id, $iduser = Auth::user()->id) }}" method="POST">
     	@csrf
         @method('PUT')
         <input type="hidden" name="ipus" value="u{{ Auth::user()->id }}">
         <input type="hidden" name="coupdate" value="uzytkownika">
+        <input type="hidden" name="word_nrzestawu" value="{{ $word->nrzestawu }}">
+        <input type="hidden" name="word_id" value="{{ $word->id }}">
         <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
                 <strong>Nr id:</strong>
-                <p>{{ $word->id }}</p>
+                <p>&nbsp&nbsp {{ $word->id }}</p>
             </div>
         </div>
-         <div class="row">
-		    <div class="col-xs-12 col-sm-12 col-md-12">
-		        <div class="form-group">
-		            <strong>Nr zestawu:</strong>
-		            <input type="text" name="nrzestawu" value="{{ $word->nrzestawu }}" class="form-control" placeholder="Wpisz nr zestawu, tabeli">
-		        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="form-group">
+                <strong>Nr org. tab.:</strong>
+                <p>&nbsp&nbsp {{ $word->nrzestawu }}</p>
+            </div>
+		</div>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+		    <div class="form-group">
+		        <strong>Dodano do tab.:</strong>
+		        <input type="text" name="dodaj_tab" value="{{ $word->dodaj_tab}}" class="form-control" placeholder="Wpisz nr zestawu, tabeli">
 		    </div>
-		    <div class="col-xs-12 col-sm-12 col-md-12">
-		        <div class="form-group">
-		            <strong>Słowo:</strong>
-		            <input type="text" name="slowo" value="{{ $word->slowo }}" class="form-control" placeholder="Wpisz słowo">
-		        </div>
-		    </div>
+		</div>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="form-group">
+                <strong>Dodano do zest.:</strong>
+                <input type="text" name="dodaj_slowo" value="{{ $word->dodaj_slowo}}" class="form-control" placeholder="Wpisz nr zestawu, tabeli">
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="form-group">
+                <strong>Słowo:</strong>
+                <input type="text" name="slowo" value="{{ $word->slowo }}" class="form-control" placeholder="Wpisz słowo">
+            </div>
+        </div>
 		    <div class="col-xs-12 col-sm-12 col-md-12">
 		        <div class="form-group">
 		            <strong>Znaczenie:</strong>
@@ -86,15 +99,14 @@
 
 		        </div>
 		    </div>
-		    <div class="col-xs-12 col-sm-12 col-md-12">
-		        <div class="form-group">
-		            <strong>Przykład:</strong>
-		            <input type="text" name="przyklad" value="{{ $word->przyklad }}" class="form-control" placeholder="Wpisz przykład">
-		        </div>
+		<div class="col-xs-12 col-sm-12 col-md-12">
+		    <div class="form-group">
+		        <strong>Przykład:</strong>
+		        <input type="text" name="przyklad" value="{{ $word->przyklad }}" class="form-control" placeholder="Wpisz przykład">
 		    </div>
-		    <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-		      <button type="submit" class="btn btn-primary">Zapisz</button>
-		    </div>
+		</div>
+		<div class="col-xs-12 col-sm-12 col-md-12 text-center">
+		    <button type="submit" class="btn btn-primary">Zapisz</button>
 		</div>
 
 

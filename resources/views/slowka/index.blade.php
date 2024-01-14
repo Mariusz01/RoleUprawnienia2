@@ -23,9 +23,8 @@
 @php
     // var_dump($wyniki)
     // echo '<pre>';
-    // print_r($wyniki);
+    // print_r($slowka);
     // echo '</pre>';
-
 
 @endphp
 
@@ -56,18 +55,31 @@
 
         <a class="btn btn-info" href="{{ route('slowka.show',$zestaw->nrzestawu) }}">Pokaż</a>
 
-        {{-- <form action="{{ route('slowka.create') }}" method="GET">
-            @csrf
-            <input type="hidden" name="nrzestawu" value={{$zestaw->nrzestawu}}>
-            <button type="submit" class="btn btn-success" >Dodaj zestaw do nauki</button>
-        </form> --}}
+        @if($zestaw->dodaj_tab)
+            <form action="{{ route('slowka.create') }}" class="btn " method="GET">
+                @csrf
+                <input type="hidden" name="nrzestawu" value={{$zestaw->nrzestawu}}>
+                <input type="hidden" name="dodaj" value= 1>
+                <button type="submit" class="btn btn-danger" >Usuń zestaw do nauki</button>
+            </form>
+        @else
 
-        @if ($zestaw->dodana == 0)
+            <form action="{{ route('slowka.create') }}" class="btn " method="GET">
+                @csrf
+                <input type="hidden" name="nrzestawu" value={{$zestaw->nrzestawu}}>
+                <input type="hidden" name="dodaj" value= 2>
+                <button type="submit" class="btn btn-success" >Dodaj zestaw do nauki</button>
+            </form>
+
+        @endif
+        {{-- <a href="{{ url('twoja/sciezka') . '?' . csrf_field() }}">Link</a> --}}
+
+        {{-- @if ($zestaw->dodana == 0)
             <a class="btn btn-success" href="{{ route('slowka.create', ['nrzestawu' => $zestaw->nrzestawu,'dodaj'=>'1'] ) }}">Dodaj zestaw do nauki</a>
         @elseif ($zestaw->dodana == 1)
             <a class="btn btn-warning" href=""> Dodany zestaw do nauki </a>
             <a class="btn btn-danger" href="{{ route('slowka.usunzestaw', ['nrzestawu' => $zestaw->nrzestawu,'dodaj'=>'2'] ) }}"> Usuń </a>
-        @endif
+        @endif --}}
 
 
         {{-- <a class="btn btn-primary" href="{{ route('slowka.edit',$word->id) }}">Edit</a> --}}
