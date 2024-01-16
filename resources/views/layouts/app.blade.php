@@ -63,12 +63,25 @@
 
                                 <li><a class="nav-link" href="{{ route('roles.index') }}">Manage Role</a></li>
                                 <li><a class="nav-link" href="{{ route('products.index') }}">Manage Product</a></li>
-                                <li><a class="nav-link" href="{{ route('words.index') }}">Słówka</a></li>
-                                <li><a class="nav-link" href="{{ route('slowka.index') }}">Tabele słowek</a></li>
+
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle"  role="button" data-bs-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="false" v-pre>Słówka</a>
+                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                        {{-- <a class="dropdown-item" href="{{ route('admin.users.index') }}">Użytkownicy do zatwierdzenia</a> --}}
+                                        <a class="nav-link" href="{{ route('words.index') }}">Lista</a>
+                                    </div>
+                                </li>
                             {{-- @elseif(!auth()->user()->approved_add) --}}
-                            @else
-                                <li><a class="nav-link" href="{{ route('slowka.index') }}">Tabele słowek</a></li>
                             @endif
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle"  role="button" data-bs-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false" v-pre>Nauka słówek</a>
+                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    {{-- <a class="dropdown-item" href="{{ route('admin.users.index') }}">Użytkownicy do zatwierdzenia</a> --}}
+                                    <a class="dropdown-item" href="{{ route('slowka.index') }}">Tabele słowek</a>
+                                </div>
+                            </li>
                         @endauth
                         <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
@@ -99,6 +112,15 @@
                 @yield('content')
             </div>
         </main>
+        <footer>
+            <div class="card-footer bg-transparent border-success">
+                <div class="container text-center">
+
+                <a class="navbar-brand" href="{{ url('/') }}">
+                    <strong>Mariusz Moskwa</strong>
+                </a>
+                </div>
+        </footer>
     </div>
 </body>
 </html>

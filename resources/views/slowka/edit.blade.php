@@ -16,7 +16,7 @@
                 <h2>Edycja</h2>
             </div>
             <div class="pull-right">
-                <a class="btn btn-info" href="{{ route('slowka.show',$word->nrzestawu) }}">Pokaż</a>
+                <a class="btn btn-info" href="{{ route('slowka.show', [$word->nrzestawu, 'page' => $strona]) }}">Pokaż</a>
             </div>
         </div>
     </div>
@@ -38,9 +38,13 @@
         </div>
     @endif
 @php
-    // echo '<pre>';
-    // print_r($word);
-    // echo '</pre>';
+    echo '<pre>';
+    print_r($word);
+    echo '</pre>';
+
+    echo '<pre>';
+    print_r($strona);
+    echo '</pre>';
     // echo '<br /><br />';
     // // echo $word->userKolumna;
     // echo '<br /><br />';

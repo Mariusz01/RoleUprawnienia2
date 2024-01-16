@@ -58,7 +58,7 @@ class CreateAdminUserSeeder extends Seeder
 
         $user2->assignRole('UzytkownikTabele');
 
-        \App\Models\User::factory(10)->create()->each(function($user){
+        \App\Models\User::factory(100)->create()->each(function($user){
             // Przypisanie roli 'UzytkownikTabele'
             $user->assignRole('UzytkownikTabele');
             // Przypisanie uprawnienia 'edit articles'

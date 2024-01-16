@@ -99,9 +99,19 @@
                 {{-- <a class="btn btn-info" href="{{ route('slowka.show',$word->id) }}">Show</a> --}}
                 {{-- @if (!empty($to->edytuj) && $to->edytuj == 'c') --}}
                 @if($to->edytuj_slowo)
-                    <a class="btn btn-success" href="{{ route('slowka.edit', $to->id) }}">Edytuj</a>
+
+                    {!! Form::open(['method' => 'GET','route' => ['slowka.edit', $to->id],'style'=>'display:inline']) !!}
+                        {!! Form::submit('Edit', ['class' => 'btn btn-success']) !!}
+                        {!! Form::hidden('currentPage', request()->route('page')) !!}
+                    {!! Form::close() !!}
+
                 @else
-                    <a class="btn btn-primary" href="{{ route('slowka.edit', $to->id) }}">Edytuj</a>
+
+                    {!! Form::open(['method' => 'GET','route' => ['slowka.edit', $to->id],'style'=>'display:inline']) !!}
+                        {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
+                        {!! Form::hidden('pageShow', $tab_slowka->currentPage()) !!}
+                    {!! Form::close() !!}
+
                 @endif
 
                     {{-- {!! Form::open(['method' => 'GET','route' => ['slowka.edit', $to->id],'style'=>'display:inline']) !!}

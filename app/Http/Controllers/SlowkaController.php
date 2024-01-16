@@ -239,14 +239,17 @@ class SlowkaController extends Controller
      * Show the form for editing the specified resource.
      * z index
      */
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
-
+        $dane = $request->all();
+        $strona = $request['pageShow'];
         // Pobierz zalogowanego użytkownika
         $user = Auth::user();
         // Pobierz ID zalogowanego użytkownika
         $userId = $user->id;
         $userTabela = 'usertab_'.$userId;
+
+
 
         $word = DB::table('words')
         ->where('words.id', $id)
@@ -273,7 +276,7 @@ class SlowkaController extends Controller
             $word->przyklad = $word->przyklad2;
         }
 
-        return view('slowka.edit',compact('word'));
+        return view('slowka.edit',compact('word','strona'));
 
     }
 
