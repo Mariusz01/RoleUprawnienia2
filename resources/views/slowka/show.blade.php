@@ -5,7 +5,7 @@
 <div class="row">
     <div class="col-lg-12 margin-tb">
         <div class="pull-left">
-            <h2>Wybrana tabela nr {{ $nrzestawu }}</h2>
+            <h2>Wybrany nr zestawu: {{ $nrzestawu }}</h2>
         </div>
         <div class="pull-right">
             {{-- <a class="btn btn-success" href="{{ route('slowka.create',['nrzestawu' => $wybrany_zestaw, 'robicdla' => 2]) }}"> Dodaj nowe słówko </a> --}}
@@ -13,7 +13,9 @@
     </div>
 </div>
 <div class="pull-right">
-    <a href="{{ URL::previous() }}" class="btn btn-primary">Wróć</a>
+    {{-- <a href="{{ URL::previous() }}" class="btn btn-primary">Wróć</a> --}}
+    <a href="{{ route('slowka.index') }}" class="btn btn-primary">Wróć</a>
+    {{-- <a class="dropdown-item" href="{{ route('slowka.index') }}">Tabele słowek</a> --}}
 </div>
 
 @if ($message = Session::get('success'))
@@ -22,38 +24,21 @@
 </div>
 @endif
 
-{{-- {{ $tab_slowka[1] }} --}}
-{{-- @foreach($tab_slowka[0] as $klucz => $wartosc)
-        {{ $klucz }}: {{ $wartosc }} <br>
-@endforeach --}}
-
-
-    {{-- {!! $tab_slowka->links() !!} --}}
-    {{-- {{ $tab_slowka[2]}} --}}
 @php
     // foreach ($tab_slowka as $to){
         // echo '<pre>';
-        // print_r($tab_slowka);
+        // print_r($tab_slowka2);
         // echo '</pre>';
     // }
-    // Pobierz zalogowanego użytkownika
-    // $user = Auth::user();
-    // // Pobierz ID zalogowanego użytkownika
-    // $userId = $user->id;
-    // $userKolumna = 'u'.$userId;
-    // echo 'numer zestawu = '.$nrzestawu.'<br />';
-    // echo 'test = '.$userKolumna.'<br />';
-    // dd($tab_slowka);
-    // var_dump($tab_slowka);
 @endphp
-{{-- {!! $tab_slowka->render() !!} --}}
-{!! $tab_slowka->links() !!}
+{{-- {!! $tab_slowka2->render() !!} --}}
+{!! $tab_slowka2->links() !!}
 
 <table class="table table-bordered">
     <tr>
         <th>Nr</th>
-        <th>Nr tab.</th>
-        <th>Dodana<br />do tab.</th>
+        <th>Nr<br />zestawu</th>
+        <th>Dodana do<br />zestawu</th>
         <th>Słówko</th>
         <th>Znaczenie</th>
         <th>Przykład</th>
@@ -63,94 +48,90 @@
     </tr>
 
 
-    @foreach ($tab_slowka as $to)
+    @foreach ($tab_slowka2 as $to)
         <tr>
             <td>{{ $to->id }}</td>
             <td>{{ $nrzestawu }}</td>
             <td>
-                {{ $to->dodaj_tab }}
+                {{ $to->dodaj_dotab2 }}
             </td>
             <td>
-                @if (empty($to->slowo2))
-                    {{ $to->slowo }}
-                @else
-                    {{ $to->slowo2}}
-                @endif
+                {{ $to->slowo2}}
             </td>
             <td>
-                @if (empty($to->znaczenie2))
-                    {{ $to->znaczenie }}
-                @else
-                    {{ $to->znaczenie2}}
-                @endif
+                {{ $to->znaczenie2}}
             </td>
             <td>
-                @if (empty($to->przyklad2))
-                    {{ $to->przyklad }}
-                @else
-                    {{ $to->przyklad2}}
-                @endif
+                 {{ $to->przyklad2}}
             </td>
-            {{-- <td>{{ $to->edytuj }}</td> --}}
-            {{-- <td>{{ $to->dodac }}</td> --}}
+            <td>
 
-
-            <td>
-                {{-- <a class="btn btn-info" href="{{ route('slowka.show',$word->id) }}">Show</a> --}}
-                {{-- @if (!empty($to->edytuj) && $to->edytuj == 'c') --}}
-                @if($to->edytuj_slowo)
-
-                    {!! Form::open(['method' => 'GET','route' => ['slowka.edit', $to->id],'style'=>'display:inline']) !!}
+                @if ($to->edytuj_slowo2)
+                    {!! Form::open(['method' => 'GET', 'route' => ['slowka.edit', $to->id], 'style' => 'display:inline']) !!}
                         {!! Form::submit('Edit', ['class' => 'btn btn-success']) !!}
-                        {!! Form::hidden('currentPage', request()->route('page')) !!}
+                        {!! Form::hidden('pageshow', 'show1') !!}
+                        {{-- Dodaj ukryte pole dla numeru strony --}}
+                        {{-- {!! Form::hidden('currentPage', request()->route()->parameter('page')) !!} --}}
+                        {!! Form::hidden('currentPage', request('page')) !!}
                     {!! Form::close() !!}
-
                 @else
-
-                    {!! Form::open(['method' => 'GET','route' => ['slowka.edit', $to->id],'style'=>'display:inline']) !!}
-                        {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
-                        {!! Form::hidden('pageShow', $tab_slowka->currentPage()) !!}
+                    {!! Form::open(['method' => 'GET', 'route' => ['slowka.edit', $to->id], 'style' => 'display:inline']) !!}
+                        {!! Form::submit('Edit', ['class' => 'btn btn-info']) !!}
+                        {!! Form::hidden('pageshow', 'show1') !!}
+                        {{-- Dodaj ukryte pole dla numeru strony --}}
+                        {{-- {!! Form::hidden('currentPage', request()->route()->parameter('page')) !!} --}}
+                        {!! Form::hidden('currentPage', request('page')) !!}
                     {!! Form::close() !!}
-
                 @endif
 
-                    {{-- {!! Form::open(['method' => 'GET','route' => ['slowka.edit', $to->id],'style'=>'display:inline']) !!}
-                        {!! Form::submit('Edytuj', ['class' => 'btn btn-danger']) !!}
-                    {!! Form::close() !!} --}}
+                @if ($to->edytuj_slowo2)
+                    <form action="{{ action('App\Http\Controllers\SlowkaController@update',[$to->id] )}}" method="POST" role="form" style='display:inline'>
+                        @csrf
+                        <input type="hidden" name="coupdate" value="resetuj1">
+                        <input type="hidden" name="page" value="{{ request('page') }}"">
+                        <input type="hidden" name="word_nrzestawu2" value="{{ $to->word_nrzestawu2 }}"">
+                        <button type="submit" class="btn btn-primary">Resetuj</button>
+                    </form>
+                @else
+                {{-- na razie robi to samo co wyżej --}}
+                    <form action="{{ action('App\Http\Controllers\SlowkaController@update',[$to->id] )}}" method="POST" role="form" style='display:inline'>
+                        @csrf
+                        <input type="hidden" name="coupdate" value="resetuj1">
+                        <input type="hidden" name="page" value="{{ request('page') }}"">
+                        <input type="hidden" name="word_nrzestawu2" value="{{ $to->word_nrzestawu2 }}"">
+                        <button type="submit" class="btn btn-success">Resetuj</button>
+                    </form>
+                @endif
+
+                {{-- {!! Form::hidden('pageShow', $tab_slowka2->currentPage()) !!} --}}
+
+                {{-- @if ($to->edytuj_slowo2) --}}
+                    {{-- <a class="btn btn-success" href="{{ route('slowka.edit',[$to->id, 'page' => $tab_slowka2->currentPage()]) }}">Edytuj</a> --}}
                 {{-- @else --}}
-                    {{-- <a class="btn btn-primary" href="{{ route('slowka.edit','2') }}">Edytuj</a>
-                    <a class="btn btn-primary" href="{{ route('users.edit',$to->id) }}">Edit</a> --}}
+                    {{-- <a class="btn btn-info" href="{{ route('slowka.edit',[$to->id, 'page' => $tab_slowka2->currentPage()]) }}">Edytuj</a> --}}
                 {{-- @endif --}}
 
-                @if ($to->edytuj_slowo)
-                    {!! Form::open(['method' => 'DELETE','route' => ['slowka.destroy', $to->id],'style'=>'display:inline']) !!}
-                        {!! Form::submit('Resetuj', ['class' => 'btn btn-danger']) !!}
-                        {!! Form::hidden('destroy', 'show1') !!}
-                        {!! Form::hidden('nrzestawu', $nrzestawu) !!}
-                    {!! Form::close() !!}
-                @else
-                    {!! Form::open(['method' => 'DELETE','route' => ['slowka.destroy', $to->id],'style'=>'display:inline']) !!}
-                        {!! Form::submit('Resetuj', ['class' => 'btn btn-success']) !!}
-                        {!! Form::hidden('destroy', 'show2') !!}
-                        {!! Form::hidden('nrzestawu', $nrzestawu) !!}
-                    {!! Form::close() !!}
-                @endif
+                {{-- @if ($to->edytuj_slowo2) --}}
+                    {{-- {!! Form::open(['method' => 'DELETE','route' => ['slowka.destroy', $to->id],'style'=>'display:inline']) !!} --}}
+                        {{-- {!! Form::hidden('destroy', 'show1') !!} --}}
+                        {{-- {!! Form::hidden('nrzestawu', $nrzestawu) !!} --}}
+                        {{-- {!! Form::hidden('currentPage', request('page')) !!} --}}
+                        {{-- {!! Form::submit('Resetuj', ['class' => 'btn btn-danger']) !!} --}}
+                    {{-- {!! Form::close() !!} --}}
+                {{-- @else --}}
+                    {{-- {!! Form::open(['method' => 'DELETE','route' => ['slowka.destroy', $to->id],'style'=>'display:inline']) !!} --}}
+                        {{-- {!! Form::hidden('destroy', 'show2') !!} --}}
+                        {{-- {!! Form::hidden('nrzestawu', $nrzestawu) !!} --}}
+                        {{-- {!! Form::hidden('currentPage', request('page')) !!} --}}
+                        {{-- {!! Form::submit('Resetuj', ['class' => 'btn btn-success']) !!} --}}
+                    {{-- {!! Form::close() !!} --}}
+                {{-- @endif --}}
 
             </td>
-
         </tr>
     @endforeach
-
-
 </table>
 
-{!! $tab_slowka->links() !!}
-
-
-
-
-
+{!! $tab_slowka2->links() !!}
 {{-- {!! $nrzestawu ->render() !!} --}}
-{{-- {!! $tab_slowka->links() !!} --}}
-
 @endsection

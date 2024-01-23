@@ -7,6 +7,17 @@
     // print_r($word);
     // echo '</pre>';
     // dd($word)
+    echo "to jest page: ".$page."<br />A to jest nrzestawu: ".$nrzestawu."<br />";
+
+    // Odczytaj wartość 'page' z bieżącego URL-a
+    // $currentPage = request()->query('page');
+    // $currentPage = request()->input('page');
+    // $currentPage = request()->get('page', 1);
+
+    // Ustaw domyślną wartość, jeśli 'page' nie istnieje
+    // $currentPage = $currentPage ?: 1;
+
+    // echo "a to page po odczytaniu: $currentPage"
 
 @endphp
 
@@ -16,7 +27,8 @@
                 <h2>Edycja</h2>
             </div>
             <div class="pull-right">
-                <a class="btn btn-info" href="{{ route('slowka.show', [$word->nrzestawu, 'page' => $strona]) }}">Pokaż</a>
+                {{-- <a class="btn btn-info" href="{{ route('slowka.show', $nrzestawu,[ 'page' => $strona,'tab'=>$tab]) }}">Pokaż</a> --}}
+                <a class="btn btn-info" href="{{ route('slowka.show', [$nrzestawu, 'page' => $page]) }}">Pokaż</a>
             </div>
         </div>
     </div>
@@ -37,35 +49,18 @@
             </ul>
         </div>
     @endif
-@php
-    echo '<pre>';
-    print_r($word);
-    echo '</pre>';
 
-    echo '<pre>';
-    print_r($strona);
-    echo '</pre>';
-    // echo '<br /><br />';
-    // // echo $word->userKolumna;
-    // echo '<br /><br />';
-    // echo $word->$userKolumna;
-    // echo '<br /><br />';
 
-    // if (!empty($word->$userKolumna) && str_contains($word->$userKolumna, ";;ktora=c;;")) {
-    //     echo '<br /><br />poszło tak<br /><br />';
-    // }else{
-    //     echo '<br /><br />nie poszło<br /><br />';
-    // }
-    // echo '<br />';
-@endphp
-
-    <form action="{{ route('slowka.update',$word->id, $iduser = Auth::user()->id) }}" method="POST">
+    {{-- <form action="{{ route('slowka.update',$word->id) }}" method="PATCH"> --}}
+    <form action="{{ action('App\Http\Controllers\SlowkaController@update',[$word->id] )}}" method="POST" role="form">
     	@csrf
-        @method('PUT')
-        <input type="hidden" name="ipus" value="u{{ Auth::user()->id }}">
+        {{-- @method('PUT') --}}
+        {{-- <input type="hidden" name="ipus" value="u{{ Auth::user()->id }}"> --}}
         <input type="hidden" name="coupdate" value="uzytkownika">
-        <input type="hidden" name="word_nrzestawu" value="{{ $word->nrzestawu }}">
-        <input type="hidden" name="word_id" value="{{ $word->id }}">
+        <input type="hidden" name="page" value="{{ $page }}"">
+        {{-- <input type="hidden" name="currentPage" value="{{ $currentPage }}"> --}}
+        {{-- <input type="hidden" name="word_id" value="{{ $word->id }}"> --}}
+        {{-- <input type="hidden" name="tab" value="{{ $word->tab }}"> --}}
         <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
                 <strong>Nr id:</strong>
@@ -74,46 +69,33 @@
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
-                <strong>Nr org. tab.:</strong>
-                <p>&nbsp&nbsp {{ $word->nrzestawu }}</p>
+                <strong>Nr oryginalneego zestawu:</strong>
+                <p>&nbsp&nbsp {{ $word->word_nrzestawu2 }}</p>
+                <input type="hidden" name="word_nrzestawu2" value="{{ $word->word_nrzestawu2 }}">
             </div>
 		</div>
-        <div class="col-xs-12 col-sm-12 col-md-12">
-		    <div class="form-group">
-		        <strong>Dodano do tab.:</strong>
-		        <input type="text" name="dodaj_tab" value="{{ $word->dodaj_tab}}" class="form-control" placeholder="Wpisz nr zestawu, tabeli">
-		    </div>
-		</div>
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Dodano do zest.:</strong>
-                <input type="text" name="dodaj_slowo" value="{{ $word->dodaj_slowo}}" class="form-control" placeholder="Wpisz nr zestawu, tabeli">
-            </div>
-        </div>
         <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
                 <strong>Słowo:</strong>
-                <input type="text" name="slowo" value="{{ $word->slowo }}" class="form-control" placeholder="Wpisz słowo">
+                <input type="text" name="slowo" value="{{ $word->slowo2 }}" class="form-control" placeholder="Wpisz słowo">
             </div>
         </div>
 		    <div class="col-xs-12 col-sm-12 col-md-12">
 		        <div class="form-group">
 		            <strong>Znaczenie:</strong>
-                    <input type="text" name="znaczenie" value="{{ $word->znaczenie }}" class="form-control" placeholder="Wpisz znaczenie">
+                    <input type="text" name="znaczenie" value="{{ $word->znaczenie2 }}" class="form-control" placeholder="Wpisz znaczenie">
 
 		        </div>
 		    </div>
 		<div class="col-xs-12 col-sm-12 col-md-12">
 		    <div class="form-group">
 		        <strong>Przykład:</strong>
-		        <input type="text" name="przyklad" value="{{ $word->przyklad }}" class="form-control" placeholder="Wpisz przykład">
+		        <input type="text" name="przyklad" value="{{ $word->przyklad2 }}" class="form-control" placeholder="Wpisz przykład">
 		    </div>
 		</div>
 		<div class="col-xs-12 col-sm-12 col-md-12 text-center">
 		    <button type="submit" class="btn btn-primary">Zapisz</button>
 		</div>
-
-
     </form>
 
 @endsection

@@ -9,6 +9,7 @@ use App\Models\Word;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
+use Psy\Command\WhereamiCommand;
 use stdClass;
 
 class SlowkaController extends Controller
@@ -29,36 +30,23 @@ class SlowkaController extends Controller
         $user = Auth::user();
         // Pobierz ID zalogowanego użytkownika
         $userId = $user->id;
-        $userTabela = 'usertab_'.$userId;
+        $userTabela = 'usertab2_'.$userId;
 
         // Wyliczanie i zliczanie wystąpień dla danej kolumny
-        $slowka = DB::table('words')
-        ->selectRaw('nrzestawu, COUNT(nrzestawu) as occurrences') //liczy ile wystąpień dla każdego zestawu
-        ->groupBy('nrzestawu') //wyniki są grupowane według zestawu
-        ->orderBy('nrzestawu','ASC') //kolejność
+        // $slowka = DB::table('words')
+        // ->selectRaw('nrzestawu, COUNT(nrzestawu) as occurrences, 1 as tab') //liczy ile wystąpień dla każdego zestawu, dodanie tab=1
+        // ->groupBy('nrzestawu') //wyniki są grupowane według zestawu
+        // ->orderBy('nrzestawu','ASC') //kolejność
+        // ->get();
+
+        $slowka2 = DB::table($userTabela)
+        ->selectRaw('word_nrzestawu2, COUNT(word_nrzestawu2) as occurrences, 2 as tab') //liczy ile wystąpień dla każdego zestawu, dodanie tab=1
+        ->groupBy('word_nrzestawu2') //wyniki są grupowane według zestawu
+        ->orderBy('word_nrzestawu2','ASC') //kolejność
         ->get();
 
-        // $slowka->map(function ($item) {
-        //     $item->dodaj_tab = false;
-        //     return $item;
-        // });
 
-        foreach($slowka as $slowo){
-            $to = DB::table($userTabela)
-            ->where('word_nrzestawu', $slowo->nrzestawu)
-            ->where('dodaj_tab', $slowo->nrzestawu)
-            ->select('dodaj_tab')
-            ->first();
-
-            // to musi być kiedy przechodzi z innego to tego widoku czyli np. z create
-            if(empty($to) || $to === false){
-                $slowo->dodaj_tab = false;
-            }else{
-                $slowo->dodaj_tab = true;
-            }
-        }
-
-        return view('slowka.index',compact('slowka'));
+        return view('slowka.index',compact('slowka2'));
     }
 
     /**
@@ -67,128 +55,7 @@ class SlowkaController extends Controller
      */
     public function create(Request $request)
     {
-        request()->validate([
-            'nrzestawu' => 'required|numeric',
-            'dodaj' => 'required|numeric', // 1 i 2 jest z index
-        ]);
-        $nrzestawu = $request->nrzestawu;
-        $dodaj = $request->dodaj;
-
-        // Pobierz zalogowanego użytkownika
-        $user = Auth::user();
-        // Pobierz ID zalogowanego użytkownika
-        $userId = $user->id;
-        $userTabela = 'usertab_'.$userId;
-/////////////////////////////////////////////////////
-        if($dodaj == 2){//dodaj zestaw do nauki
-            //pobranie tablicy words
-            $slowka2 = DB::table('words')
-            ->where('nrzestawu', $nrzestawu)
-            ->select(
-                'id',
-                'nrzestawu',
-                'slowo',
-                'znaczenie',
-                'przyklad',
-            )
-            ->get();
-
-            foreach($slowka2 as $word1){
-                $edytowane = DB::table($userTabela)
-                ->where('word_id', $word1->nrzestawu)
-                ->select('edytuj_slowo')
-                ->first();
-
-                if(!$edytowane){//jeśli było edytowane przed dodaniem zestawu do nauki
-                    DB::table($userTabela)->updateOrInsert(
-                        ['word_id' => $word1->id], // Warunki filtrujące
-                        ['word_nrzestawu' => $word1->nrzestawu,'word_id' => $word1->id, 'dodaj_tab' => $word1->nrzestawu]
-                    );
-                }else{
-                    DB::table($userTabela)->updateOrInsert(
-                        ['word_id' => $word1->id], // Warunki filtrujące
-                        ['word_nrzestawu' => $word1->nrzestawu,'word_id' => $word1->id, 'slowo2' => null,'znaczenie2'=>null,
-                            'przyklad2' => null, 'dodaj_tab' => $word1->nrzestawu]
-                    );
-                }
-
-
-            }
-            $slowka = DB::table('words')
-            ->selectRaw('nrzestawu, COUNT(nrzestawu) as occurrences') //liczy ile wystąpień dla każdego zestawu
-            ->groupBy('nrzestawu') //wyniki są grupowane według zestawu
-            ->orderBy('nrzestawu','ASC') //kolejność
-            ->get();
-
-            //to z index
-            foreach($slowka as $slowo){
-                $to = DB::table($userTabela)
-                ->where('dodaj_tab', $slowo->nrzestawu)
-                ->select('dodaj_tab')
-                ->first();
-
-                // to musi być kiedy przechodzi z innego to tego widoku czyli np. z create
-                if(empty($to) || $to === false){
-                    $slowo->dodaj_tab = 0;
-                }else{
-                    $slowo->dodaj_tab = $to;
-                }
-            }
-        }elseif($dodaj == 1){
-            //pobranie tablicy words
-            $slowka2 = DB::table('words')
-            ->where('nrzestawu', $nrzestawu)
-            ->select(
-                'id',
-                'nrzestawu',
-                'slowo',
-                'znaczenie',
-                'przyklad',
-            )
-            ->get();
-            //to jest raczej do usunięcia wszystkich wierdszy które mają word_nrzestawu
-            foreach($slowka2 as $word1){
-                $raz = DB::table($userTabela)
-                ->where('word_id', $word1->id)
-                ->first();
-                if(!empty($raz->dodaj_slowo) && $raz->dodaj_slowo != null){// jeśli jest dodany to tylko zaktualizować, albo nic
-                    DB::table($userTabela)->updateOrInsert(
-                        ['word_id' => $word1->id], // Warunki filtrujące
-                        ['word_nrzestawu' => $word1->nrzestawu,'word_id' => $word1->id, 'slowo2' => null,'znaczenie2'=>null,
-                            'przyklad2' => null, 'dodaj_tab' => null]
-                    );
-                }else{
-                    // usunięcie wiersza
-                    DB::table($userTabela)->where('word_id', $word1->id)->delete();
-                }
-            }
-
-
-
-            $slowka = DB::table('words')
-            ->selectRaw('nrzestawu, COUNT(nrzestawu) as occurrences') //liczy ile wystąpień dla każdego zestawu
-            ->groupBy('nrzestawu') //wyniki są grupowane według zestawu
-            ->orderBy('nrzestawu','ASC') //kolejność
-            ->get();
-
-            //to z index
-            foreach($slowka as $slowo){
-                $to = DB::table($userTabela)
-                ->where('dodaj_tab', $slowo->nrzestawu)
-                ->select('dodaj_tab')
-                ->first();
-
-                // to musi być kiedy przechodzi z innego to tego widoku czyli np. z create
-                if(empty($to) || $to === false){
-                    $slowo->dodaj_tab = 0;
-                }else{
-                    $slowo->dodaj_tab = $to;
-                }
-            }
-        }
-/////////////////////////////////////////////////////
-
-        return view('slowka.index', compact('slowka'));
+        //
 
     }
 
@@ -203,35 +70,38 @@ class SlowkaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, $nrzestawu)
+    public function show($nrzestawu)
     {
+        // request()->validate([
+        //     'nrzestawu' => 'numeric',
+        // ]);
+        // $nrzestawu = $nrzestawu2;
+
         // Pobierz zalogowanego użytkownika
         $user = Auth::user();
         // Pobierz ID zalogowanego użytkownika
         $userId = $user->id;
-        $userTabela = 'usertab_'.$userId;
+        $userTabela = 'usertab2_'.$userId;
 
-        // $liczbaRekordow = DB::table($userTabela)->count();
-
-        $tab_slowka = DB::table('words')
-        ->where('words.nrzestawu', $nrzestawu)
-        ->leftJoin($userTabela, $userTabela.'.word_id', '=', 'words.id')
-        ->select(
-            'words.id',
-            'words.nrzestawu',
-            'words.slowo',
-            'words.znaczenie',
-            'words.przyklad',
-            $userTabela.'.dodaj_tab',
-            $userTabela.'.slowo2',
-            $userTabela.'.znaczenie2',
-            $userTabela.'.przyklad2',
-            $userTabela.'.edytuj_slowo',
-        )
+        $tab_slowka2 = DB::table($userTabela)
+        ->where('word_nrzestawu2', $nrzestawu)
+            ->select(
+                'id',
+                'word_nrzestawu2',
+                'slowo2',
+                'znaczenie2',
+                'przyklad2',
+                'dodaj_donauki2',
+                'dodaj_dotab2',
+                'dodaj_slowo2',
+                'edytuj_slowo2',
+                'usun_slowo2',
+                'tab',
+            )
         ->paginate(15);
+        // ->get();
 
-
-        return view('slowka.show',compact('tab_slowka', 'nrzestawu', 'userTabela'));
+        return view('slowka.show',compact('tab_slowka2', 'nrzestawu')); //tab_slowka2 - tylko dla testu
         // ->with('i', ($request->input('page', 1) - 1) * 15);
     }
 
@@ -239,44 +109,48 @@ class SlowkaController extends Controller
      * Show the form for editing the specified resource.
      * z index
      */
-    public function edit(Request $request, $id)
+    public function edit(Request $request,$id)
     {
-        $dane = $request->all();
-        $strona = $request['pageShow'];
+        request()->validate([
+            'currentPage' => 'integer',
+            'page' => 'integer',
+        ]);
         // Pobierz zalogowanego użytkownika
         $user = Auth::user();
         // Pobierz ID zalogowanego użytkownika
         $userId = $user->id;
-        $userTabela = 'usertab_'.$userId;
+        $userTabela = 'usertab2_'.$userId;
 
 
-
-        $word = DB::table('words')
-        ->where('words.id', $id)
-        ->leftJoin($userTabela, 'words.id', '=', $userTabela.'.word_id')
-        ->select(
-            'words.id',
-            'words.nrzestawu',
-            'words.slowo',
-            'words.znaczenie',
-            'words.przyklad',
-            $userTabela.'.word_nrzestawu',
-            $userTabela.'.slowo2',
-            $userTabela.'.znaczenie2',
-            $userTabela.'.przyklad2',
-            $userTabela.'.edytuj_slowo',
-            $userTabela.'.dodaj_tab',
-            $userTabela.'.dodaj_slowo',
-        )
+        $word = DB::table($userTabela)
+        ->where('id', $id)
+            ->select(
+                'id',
+                'word_nrzestawu2',
+                'nrzestawu2',
+                'slowo2',
+                'znaczenie2',
+                'przyklad2',
+                'dodaj_donauki2',
+                'dodaj_dotab2',
+                'dodaj_slowo2',
+                'edytuj_slowo2',
+                'usun_slowo2',
+                'tab',
+            )
         ->first();
 
-        if($word->edytuj_slowo){
-            $word->slowo = $word->slowo2;
-            $word->znaczenie = $word->znaczenie2;
-            $word->przyklad = $word->przyklad2;
+        if(request('currentPage')){
+            $page = request('currentPage');
+        }elseif(request('page')){
+            $page = request('page');
+        }else{
+            $page = 1;
         }
+        // $tab = $word->tab;
+        $nrzestawu = $word->word_nrzestawu2;
 
-        return view('slowka.edit',compact('word','strona'));
+        return view('slowka.edit',compact('word','nrzestawu','page'));
 
     }
 
@@ -288,53 +162,81 @@ class SlowkaController extends Controller
     public function update(Request $request, $id)
     {
         request()->validate([
-            'coupdate' => 'required|string',
-            'nrzestawu',
-            'slowo' => 'required|string',
-            'znaczenie' => 'required|string',
-            'przyklad' => 'string',
-            'edytuj_slowo',
-            'dodaj_tab',
+            'coupdate' => 'string',
+            // 'nrzestawu' =>'integer',
+            'slowo' => 'string',
+            'znaczenie' => 'string',
+            'przyklad' => 'string|nullable',
+            'word_nrzestawu2',
+            'page',
+            // 'currentPage' => 'required|integer'
+            // 'edytuj_slowo' => 'integer',
         ]);
+        // $this->$id = $id;
         $dane = $request->all();
         // Pobierz zalogowanego użytkownika
         $user = Auth::user();
         // Pobierz ID zalogowanego użytkownika
         $userId = $user->id;
-        $userTabela = 'usertab_'.$userId;
+
+        $userTabela = 'usertab2_'.$userId;
+        $page = $dane['page'];
+        // $tab = $dane['tab'];
+        // $nrzestawu = $dane['nrzestawu'];
+        // $page = $dane['page'];
+        // $page = request('page');
+        // $nrzestawu = $dane['word_nrzestawu2'];
+        // $currentPage =$dane['currentPage'];
 
         if($dane['coupdate'] === 'uzytkownika'){
-            $existingRecord = DB::table($userTabela)->where('id', $id)->first();
-            if ($existingRecord) {
-                // Rekord istnieje, wykonaj aktualizację zamiast wstawiania
-                DB::table($userTabela)->where('id', $id)->update([
-                    'word_id' => $dane['word_id'],
-                    'word_nrzestawu' => $dane['word_nrzestawu'],
-                    'dodaj_tab' => $dane['dodaj_tab'],
-                    'dodaj_slowo' => $dane['dodaj_slowo'],
-                    'slowo2' => $dane['slowo'],
-                    'znaczenie2' => $dane['znaczenie'],
-                    'przyklad2' => $dane['przyklad'],
-                    'edytuj_slowo' => true,
-                ]);
-            } else {
-                // Rekord nie istnieje, wykonaj wstawianie
-                DB::table($userTabela)->insert([
-                    'id' => $id,
-                    'word_id' => $dane['word_id'],
-                    'word_nrzestawu' => $dane['word_nrzestawu'],
-                    'dodaj_tab' => $dane['dodaj_tab'],
-                    'dodaj_slowo' => $dane['dodaj_slowo'],
-                    'slowo2' => $dane['slowo'],
-                    'znaczenie2' => $dane['znaczenie'],
-                    'przyklad2' => $dane['przyklad'],
-                    'edytuj_slowo' => true,
-                ]);
-            }
+            DB::table($userTabela)->where('id', $id)->update([
+                // 'word_id' => $id,
+                // 'word_nrzestawu2' => $dane['word_nrzestawu'],
+                // 'dodaj_dotab2' => $dane['dodaj_dotab'],
+                // 'dodaj_slowo2' => $dane['dodaj_slowo'],
+                'slowo2' => $dane['slowo'],
+                'znaczenie2' => $dane['znaczenie'],
+                'przyklad2' => $dane['przyklad'],
+                'edytuj_slowo2' => true,
+            ]);
+            return redirect()->route('slowka.edit', [$id,'page'=>$page]) //page musi być tak zapisane aby przekazało wartość
+                        ->with('success','Słowo zostało zaktualizowane '.$page);
+
+        }elseif($dane['coupdate'] === 'resetuj1'){
+            $word = DB::table('words')
+            ->where('id', $id)
+            ->select(
+                'slowo',
+                'znaczenie',
+                'przyklad',
+                'nrzestawu'
+            )
+            ->first();
+
+            DB::table($userTabela)
+            ->where('id', $id)->update([
+                'nrzestawu2' => 0,
+                'slowo2' => $word->slowo,
+                'znaczenie2' => $word->znaczenie,
+                'przyklad2' => $word->przyklad,
+                'dodaj_donauki2' => 0,
+                'dodaj_dotab2' => 0,
+                'dodaj_slowo2' => 0,
+                'edytuj_slowo2' => 0,
+                'dalej2_1' => 0,
+                'dalej2_2' => 0,
+                'dalej2_3' => 0,
+                'nauka2_1' => 0,
+                'nauka2_2' => 0,
+                'nauka2_3' => 0,
+                'nauka2_4' => 0,
+            ]);
+            $nrzestawu = $word->nrzestawu;
+
+            return redirect()->route('slowka.show', [$nrzestawu, 'page' => $page]);
         }
 
-        return redirect()->route('slowka.edit', [$id])
-                        ->with('success','Słowo zostało zaktualizowane');
+
     }
 
     /**
@@ -348,115 +250,64 @@ class SlowkaController extends Controller
         $user = Auth::user();
         // Pobierz ID zalogowanego użytkownika
         $userId = $user->id;
-        $userTabela = 'usertab_'.$userId;
+        $userTabela = 'usertab2_'.$userId;
         $nrzestawu = $dane['nrzestawu'];
+
+        $word = DB::table('words')
+        ->where('id', $id)
+        ->select(
+            'slowo',
+            'znaczenie',
+            'przyklad',
+        )
+        ->first();
 
         if($dane['destroy'] === 'show1'){
             DB::table($userTabela)
-            ->where('word_id', $id)->update([
-                'slowo2' => null,
-                'znaczenie2' => null,
-                'przyklad2' => null,
-                'dodaj_tab' => null,
-                'dodaj_slowo' => null,
-                'edytuj_slowo' => null,
-                'dalej1' => null,
-                'dalej2' => null,
-                'dalej3' => null,
-                'nauka1' => null,
-                'nauka2' => null,
-                'nauka3' => null,
-                'nauka4' => null,
+            ->where('id', $id)->update([
+                'nrzestawu2' => 0,
+                'slowo2' => $word->slowo,
+                'znaczenie2' => $word->znaczenie,
+                'przyklad2' => $word->przyklad,
+                'dodaj_donauki2' => 0,
+                'dodaj_dotab2' => 0,
+                'dodaj_slowo2' => 0,
+                'edytuj_slowo2' => 0,
+                'dalej2_1' => 0,
+                'dalej2_2' => 0,
+                'dalej2_3' => 0,
+                'nauka2_1' => 0,
+                'nauka2_2' => 0,
+                'nauka2_3' => 0,
+                'nauka2_4' => 0,
             ]);
-
-            $tab_slowka = DB::table('words')
-            ->where('words.nrzestawu', $nrzestawu)
-            ->leftJoin($userTabela, $userTabela.'.word_id', '=', 'words.id')
-            ->select(
-                'words.id',
-                'words.nrzestawu',
-                'words.slowo',
-                'words.znaczenie',
-                'words.przyklad',
-                $userTabela.'.dodaj_tab',
-                $userTabela.'.slowo2',
-                $userTabela.'.znaczenie2',
-                $userTabela.'.przyklad2',
-                $userTabela.'.edytuj_slowo',
-            )
-            ->paginate(15);
-        }elseif($dane['destroy'] === 'show2'){// na razie nic nie robi, jest zielony w widoku show
-            $tab_slowka = DB::table('words')
-            ->where('words.nrzestawu', $nrzestawu)
-            ->leftJoin($userTabela, $userTabela.'.word_id', '=', 'words.id')
-            ->select(
-                'words.id',
-                'words.nrzestawu',
-                'words.slowo',
-                'words.znaczenie',
-                'words.przyklad',
-                $userTabela.'.dodaj_tab',
-                $userTabela.'.slowo2',
-                $userTabela.'.znaczenie2',
-                $userTabela.'.przyklad2',
-                $userTabela.'.edytuj_slowo',
-                )
-            ->paginate(15);
         }
 
-        // ma być przekierowanie
-        return view('slowka.show', compact('tab_slowka','nrzestawu'))
-        ->with('success','Słowo zostało usunięte');
+        $tab_slowka2 = DB::table($userTabela)
+            ->where('word_nrzestawu2', $nrzestawu)
+                ->select(
+                    'id',
+                    'word_nrzestawu2',
+                    'slowo2',
+                    'znaczenie2',
+                    'przyklad2',
+                    'dodaj_donauki2',
+                    'dodaj_dotab2',
+                    'dodaj_slowo2',
+                    'edytuj_slowo2',
+                    'usun_slowo2',
+                    'tab',
+                )
+            ->paginate(15);
+            // ->get();
+
+            $page = $dane['currentPage'];
+            return view('slowka.show', [$nrzestawu]);
     }
 
 
 
     public function usunzestaw(Request $request){
-        request()->validate([
-            'nrzestawu' => 'required|numeric',
-            'dodaj' => 'required|numeric',
-        ]);
-        $nrzestawu = $request->nrzestawu;
-        $dodaj = $request->dodaj;
-        // Pobierz zalogowanego użytkownika
-        $user = Auth::user();
-        // Pobierz ID zalogowanego użytkownika
-        $userId = $user->id;
-        $userKolumna = 'u'.$userId;
 
-        if($dodaj === '2'){
-            // Slowka::update(["$userKolumna" => 'test', ]);
-            Slowka::where('word_nrzestawu',$nrzestawu)->update([$userKolumna => null,]);
-        }
-
-        // Wyliczanie i zliczanie wystąpień dla danej kolumny
-        $slowka = DB::table('words')
-        ->selectRaw('nrzestawu, COUNT(nrzestawu) as occurrences') //liczy ile wystąpień dla każdego zestawu
-        ->groupBy('nrzestawu') //wyniki są grupowane według zestawu
-        ->orderBy('nrzestawu','ASC') //kolejność
-        ->get();
-
-        //dodanie nowej kolumny do zapisania danej czy tabela jest dołączona do nauki czy nie
-        $slowka->map(function($item){
-            $item->dodana = null;
-        });
-        $wyniki = Slowka::groupBy('word_nrzestawu')
-        ->select('word_nrzestawu', DB::raw('MIN(id) as pierwszy_wiersz_id'), DB::raw('MAX('.$userKolumna.') as user_column_value'))
-        ->get();
-
-        //pobrać po jednym z każdego zestawu i prawdzić czy jest +
-        foreach ($wyniki as $zestaw) {
-            $slowko = $slowka->where('nrzestawu', $zestaw->word_nrzestawu)->first();
-            if ($slowko) {
-                $slowko->dodana = (isset($zestaw->user_column_value) && str_contains($zestaw->user_column_value, ";;dodac=+;;")) ? 1 : 0;
-            }
-            // if(str_contains($zestaw->user_column_value, ";;dodac=+;;")){
-            //     $slowko->dodana = 1;
-            // }elseif(str_contains($zestaw->user_column_value, ";;dodac=-;;") || $zestaw->user_column_value == null){
-            //     $slowko->dodana = 0;
-            // }
-        }
-
-        return view('slowka.index', compact('slowka','wyniki'));
     }
 }

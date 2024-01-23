@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string("slowo",1024);
             $table->string("znaczenie",1024);
             $table->string("przyklad",1024);
+            $table->smallInteger('tab')->default(1);
             $table->timestamps();
         });
     }

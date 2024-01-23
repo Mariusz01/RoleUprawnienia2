@@ -76,7 +76,7 @@
                             @endif
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle"  role="button" data-bs-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="false" v-pre>Nauka słówek</a>
+                                    aria-haspopup="true" aria-expanded="false" v-pre>Moje słówka</a>
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     {{-- <a class="dropdown-item" href="{{ route('admin.users.index') }}">Użytkownicy do zatwierdzenia</a> --}}
                                     <a class="dropdown-item" href="{{ route('slowka.index') }}">Tabele słowek</a>

@@ -10,6 +10,16 @@
         <div class="pull-right">
             <a class="btn btn-success" href="{{ route('words.create') }}"> Dodaj nowe słówko </a>
         </div>
+
+        <form action="{{ route('processJson') }}" method="post" enctype="multipart/form-data">
+            @csrf
+            <label for="jsonFiles">Wybierz pliki JSON do przetworzenia:</label>
+            <input type="file" name="jsonFiles[]" id="jsonFiles" accept=".json" multiple>
+            <button class="" type="submit">Przetwórz</button>
+        </form>
+
+        <a class="btn btn-info" href="{{ route('downloadJson') }}" download>Pobierz tabelę</a>
+
     </div>
 </div>
 

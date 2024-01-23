@@ -18,7 +18,7 @@ class ProfilerFactory extends Factory
     public function definition(): array
     {
         // $users = User::all();
-        $ile = User::count();
+        // $ile = User::count();
 
 
         return [
