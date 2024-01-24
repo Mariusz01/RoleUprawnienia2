@@ -94,7 +94,6 @@
                         <button type="submit" class="btn btn-primary">Resetuj</button>
                     </form>
                 @else
-                {{-- na razie robi to samo co wyżej --}}
                     <form action="{{ action('App\Http\Controllers\SlowkaController@update',[$to->id] )}}" method="POST" role="form" style='display:inline'>
                         @csrf
                         <input type="hidden" name="coupdate" value="resetuj1">
@@ -105,6 +104,34 @@
                     </form>
                 @endif
 
+                @if (!$to->dodaj_slowo2)
+                    <form action="{{ action('App\Http\Controllers\SlowkaController@update',[$to->id] )}}" method="POST" role="form" style='display:inline'>
+                        @csrf
+                        <input type="hidden" name="coupdate" value="dodaj1">
+                        <input type="hidden" name="page" value="{{ (empty(request('page'))? 1 : request('page')) }}"">
+                        <input type="hidden" name="word_nrzestawu2" value="{{ $to->word_nrzestawu2 }}"">
+                        <button type="submit" class="btn btn-primary">Dodaj</button>
+                    </form>
+                @else
+                    <form action="{{ action('App\Http\Controllers\SlowkaController@update',[$to->id] )}}" method="POST" role="form" style='display:inline'>
+                        @csrf
+                        <input type="hidden" name="coupdate" value="usun1">
+                        <input type="hidden" name="page" value="{{ (empty(request('page'))? 1 : request('page')) }}"">
+                        <input type="hidden" name="word_nrzestawu2" value="{{ $to->word_nrzestawu2 }}"">
+                        <button type="submit" class="btn btn-danger">Usuń</button>
+
+                    </form>
+                @endif
+
+
+                {{-- <div class="btn-group"> --}}
+                    {{-- <button type="button" class="btn btn-outline-secondary"> --}}
+                        {{-- <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M6 8a.5.5 0 0 0 .5.5h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L12.293 7.5H6.5A.5.5 0 0 0 6 8m-2.5 7a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5"/>
+                          </svg> --}}
+                      {{-- Dodaj --}}
+                    {{-- </button> --}}
+                {{-- </div> --}}
 
                 {{-- {!! Form::hidden('pageShow', $tab_slowka2->currentPage()) !!} --}}
 

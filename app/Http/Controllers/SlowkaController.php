@@ -232,11 +232,24 @@ class SlowkaController extends Controller
                 'nauka2_4' => 0,
             ]);
             $nrzestawu = $word->nrzestawu;
-
             return redirect()->route('slowka.show', [$nrzestawu, 'page' => $page]);
+        }elseif($dane['coupdate'] === 'dodaj1'){
+            DB::table($userTabela)
+            ->where('id', $id)->update([
+                'dodaj_slowo2' => true,
+                'nrzestawu2' => $dane['word_nrzestawu2'],
+            ]);
+            return redirect()->route('slowka.show', [$dane['word_nrzestawu2'], 'page' => $page]) //page musi być tak zapisane aby przekazało wartość
+                        ->with('success','Dodałeś słowo do nauki');
+        }elseif($dane['coupdate'] === 'usun1'){
+            DB::table($userTabela)
+            ->where('id', $id)->update([
+                'dodaj_slowo2' => 0,
+                'nrzestawu2' => 0,
+            ]);
+            return redirect()->route('slowka.show', [$dane['word_nrzestawu2'], 'page' => $page]) //page musi być tak zapisane aby przekazało wartość
+                        ->with('success','Usunąłeś słowo z listy do nauki');
         }
-
-
     }
 
     /**
