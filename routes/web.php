@@ -52,8 +52,8 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('users', App\Http\Controllers\UserController::class);
         Route::resource('words', App\Http\Controllers\WordController::class);
         Route::get('/users', 'App\Http\Controllers\UserController@index')->name('admin.users.index');
-        Route::get('/users/{user_id}/approve', 'App\Http\Controllers\UserController@approve')->name('admin.users.approve');
-        Route::get('/users/{user_id}/notapprove', 'App\Http\Controllers\UserController@approve')->name('admin.users.notapprove');
+        Route::post('/users/{user_id}/approve', 'App\Http\Controllers\UserController@approve')->name('admin.users.approve');
+        Route::post('/users/{user_id}/notapprove', 'App\Http\Controllers\UserController@approve')->name('admin.users.notapprove');
 
 
     });

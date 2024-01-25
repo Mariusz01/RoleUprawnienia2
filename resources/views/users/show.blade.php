@@ -8,11 +8,17 @@
             <h2> Show User</h2>
         </div>
         <div class="pull-right">
-            <a href="{{ URL::previous() }}" class="btn btn-primary">Wróć</a>
+            {{-- <a href="{{ URL::previous() }}" class="btn btn-primary">Wróć</a> --}}
+            <a class="btn btn-primary" href="{{ route('admin.users.index', ['page' => $page]) }}">Wróć</a>
+            {{-- <a class="btn btn-primary" href="{{ route('/users.index') }}"> Back </a> --}}
         </div>
     </div>
 </div>
-
+@php
+    // echo '<pre>';
+    // print_r($user2);
+    // echo '</pre>';
+@endphp
 
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12">

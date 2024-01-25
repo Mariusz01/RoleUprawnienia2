@@ -8,7 +8,8 @@
             <h2>Edycja użytkownika</h2>
         </div>
         <div class="pull-right">
-            <a href="{{ URL::previous() }}" class="btn btn-primary">Wróć</a>
+            {{-- <a href="{{ URL::previous() }}" class="btn btn-primary">Wróć</a> --}}
+            <a class="btn btn-primary" href="{{ route('admin.users.index', ['page' => $page]) }}">Wróć</a>
         </div>
     </div>
 </div>
@@ -27,6 +28,8 @@
 
 
 {!! Form::model($user, ['method' => 'PATCH','route' => ['users.update', $user->id]]) !!}
+@csrf
+<input type="hidden" name="page" value="{{ $page }}"">
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">

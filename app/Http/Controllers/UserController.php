@@ -79,10 +79,22 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
+        request()->validate([
+            'currentPage' => 'integer',
+            'page' => 'integer',
+        ]);
         $user = User::find($id);
-        return view('users.show',compact('user'));
+        if(request('currentPage')){
+            $page = request('currentPage');
+        }elseif(request('page')){
+            $page = request('page');
+        }else{
+            $page = 1;
+        }
+
+        return view('users.show',compact('user','page'));
     }
 
     /**
@@ -93,11 +105,22 @@ class UserController extends Controller
      */
     public function edit($id)
     {
+        request()->validate([
+            'currentPage' => 'integer',
+            'page' => 'integer',
+        ]);
+        if(request('currentPage')){
+            $page = request('currentPage');
+        }elseif(request('page')){
+            $page = request('page');
+        }else{
+            $page = 1;
+        }
         $user = User::find($id);
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name','name')->all();
 
-        return view('users.edit',compact('user','roles','userRole'));
+        return view('users.edit',compact('user','roles','userRole','page'));
     }
 
     /**
@@ -114,6 +137,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email,'.$id,
             'password' => 'same:confirm-password',
             'roles' => '',
+            'page' => 'integer',
         ]);
         $input = $request->all();
         if(!empty($input['password'])){
@@ -128,7 +152,7 @@ class UserController extends Controller
             $input['email_verified_at'] = null;
         }
         if($request->has('approved_at')){ //kiedy true - zaznaczone
-            $this->approve($id);
+            $this->approve($request,$id); //wywołanie funkcji która jest na dole
         }elseif(!$request->has('approved_at')){ //kiedy false - nie zaznaczone
             $this->notapprove($id);
         }
@@ -138,9 +162,10 @@ class UserController extends Controller
         DB::table('model_has_roles')->where('model_id',$id)->delete();
 
         $user->assignRole($request->input('roles'));
+        $page = $input['page'];
 
         $data = User::orderBy('id','ASC')->paginate(15);
-        return redirect()->route('admin.users.index', compact('data'))
+        return redirect()->route('admin.users.index', compact('page','data'))
                         ->with('success','Dane '.$user->name.' o id: '.$user->id.' uaktualnione.');
     }
 
@@ -161,8 +186,19 @@ class UserController extends Controller
     }
 
 
-    public function approve($user_id)
+    public function approve(Request $request, $user_id)
     {
+        request()->validate([
+            'currentPage' => 'integer',
+            'page' => 'integer',
+        ]);
+        if(request('currentPage')){
+            $page = request('currentPage');
+        }elseif(request('page')){
+            $page = request('page');
+        }else{
+            $page = 1;
+        }
         $user = User::findOrFail($user_id);
         // $user->update(['approved_at' => now()]);
         $user->approved_at = now();
@@ -170,8 +206,9 @@ class UserController extends Controller
 
         // return redirect()->route('admin.users.index')->withMessage('User approved successfully');
         $data = User::orderBy('id','ASC')->paginate(15);
-            return view('users.index',compact('data'))
-            ->with('success','User approved successfully');
+
+        return redirect()->route('admin.users.index', compact('page','data'))
+            ->with('success','Użytkownik nr '.$user_id.' zatwierdzony');
     }
 
 
@@ -184,6 +221,7 @@ class UserController extends Controller
 
         // return redirect()->route('admin.users.index')->withMessage('User approved successfully');
         $data = User::orderBy('id','ASC')->paginate(15);
+
             return view('users.index',compact('data'))
             ->with('success','User approved successfully');
     }
