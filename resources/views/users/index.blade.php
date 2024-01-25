@@ -36,13 +36,15 @@
     <td>{{ $user->id }}</td>
     <td>{{ $user->name }}</td>
     <td>
-        {{ $user->email }}
+        <div class="btn-group">
         @if ($user->email_verified_at)
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
-            <label class="form-check-label" for="flexCheckCheckedDisabled"></label>
-        </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
+                <label class="form-check-label" for="flexCheckCheckedDisabled"></label>
+            </div>
         @endif
+        {{ $user->email }}
+        </div>
     </td>
     <td>
       @if(!empty($user->getRoleNames()))
