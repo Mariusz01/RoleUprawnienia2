@@ -27,8 +27,7 @@
                 <h2>Edycja</h2>
             </div>
             <div class="pull-right">
-                {{-- <a class="btn btn-info" href="{{ route('slowka.show', $nrzestawu,[ 'page' => $strona,'tab'=>$tab]) }}">Pokaż</a> --}}
-                <a class="btn btn-info" href="{{ route('slowka.show', ['page' => $page]) }}">Pokaż</a>
+                <a class="btn btn-info" href="{{ route('slowka.show', [$nrzestawu, 'page' => $page]) }}">Pokaż</a>
             </div>
         </div>
     </div>

@@ -200,8 +200,7 @@ class SlowkaController extends Controller
                 'edytuj_slowo2' => true,
             ]);
             return redirect()->route('slowka.edit', [$id,'page'=>$page]) //page musi być tak zapisane aby przekazało wartość
-                        ->with('success','Słowo zostało zaktualizowane '.$page);
-
+                        ->with('success','Słowo zostało zaktualizowane ');
         }elseif($dane['coupdate'] === 'resetuj1'){
             $word = DB::table('words')
             ->where('id', $id)
