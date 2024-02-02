@@ -26,7 +26,7 @@
     // echo '</pre>';
 
     // echo '<pre>';
-    // print_r($slowka3);
+    // print_r($slowka2);
     // echo '</pre>';
 
 @endphp

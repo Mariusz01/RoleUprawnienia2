@@ -121,7 +121,6 @@ class SlowkaController extends Controller
         $userId = $user->id;
         $userTabela = 'usertab2_'.$userId;
 
-
         $word = DB::table($userTabela)
         ->where('id', $id)
             ->select(

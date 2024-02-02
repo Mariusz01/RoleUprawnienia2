@@ -6,7 +6,7 @@
     // echo '<pre>';
     // print_r($word);
     // echo '</pre>';
-    // dd($word)
+    // // dd($word)
     // echo "to jest page: ".$page."<br />A to jest nrzestawu: ".$nrzestawu."<br />";
 
     // Odczytaj wartość 'page' z bieżącego URL-a
@@ -19,6 +19,8 @@
 
     // echo "a to page po odczytaniu: $currentPage"
 
+    // echo  route('slowka.show', $nrzestawu,[ 'page' => $page]) ;
+
 @endphp
 
     <div class="row">
@@ -27,8 +29,8 @@
                 <h2>Edycja</h2>
             </div>
             <div class="pull-right">
-                {{-- <a class="btn btn-info" href="{{ route('slowka.show', $nrzestawu,[ 'page' => $strona,'tab'=>$tab]) }}">Pokaż</a> --}}
-                <a class="btn btn-info" href="{{ route('slowka.show', ['page' => $page]) }}">Pokaż</a>
+                <a class="btn btn-info" href="{{ route('slowka.show', [$nrzestawu, 'page' => $page]) }}">Pokaż</a>
+                {{-- <a class="btn btn-info" href="{{ route('slowka.show', ['page' => $page]) }}">Pokaż</a> --}}
             </div>
         </div>
     </div>
