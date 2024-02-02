@@ -1,6 +1,5 @@
 @extends('layouts.app')
 
-
 @section('content')
 <div class="row">
     <div class="col-lg-12 margin-tb">
@@ -68,39 +67,20 @@
 
                 @if ($to->edytuj_slowo2)
                     {!! Form::open(['method' => 'GET', 'route' => ['slowka.edit', $to->id], 'style' => 'display:inline']) !!}
-                        {!! Form::submit('Edit', ['class' => 'btn btn-success']) !!}
                         {!! Form::hidden('pageshow', 'show1') !!}
                         {{-- Dodaj ukryte pole dla numeru strony --}}
                         {{-- {!! Form::hidden('currentPage', request()->route()->parameter('page')) !!} --}}
                         {!! Form::hidden('currentPage', (empty(request('page'))? 1 : request('page'))) !!}
+                        {!! Form::submit('Edit', ['class' => 'btn btn-success']) !!}
                     {!! Form::close() !!}
                 @else
                     {!! Form::open(['method' => 'GET', 'route' => ['slowka.edit', $to->id], 'style' => 'display:inline']) !!}
-                        {!! Form::submit('Edit', ['class' => 'btn btn-info']) !!}
                         {!! Form::hidden('pageshow', 'show1') !!}
                         {{-- Dodaj ukryte pole dla numeru strony --}}
                         {{-- {!! Form::hidden('currentPage', request()->route()->parameter('page')) !!} --}}
                         {!! Form::hidden('currentPage', (empty(request('page'))? 1 : request('page'))) !!}
+                        {!! Form::submit('Edit', ['class' => 'btn btn-info']) !!}
                     {!! Form::close() !!}
-                @endif
-
-                @if ($to->edytuj_slowo2)
-                    <form action="{{ action('App\Http\Controllers\SlowkaController@update',[$to->id] )}}" method="POST" role="form" style='display:inline'>
-                        @csrf
-                        <input type="hidden" name="coupdate" value="resetuj1">
-                        <input type="hidden" name="page" value="{{ (empty(request('page'))? 1 : request('page')) }}"">
-                        <input type="hidden" name="word_nrzestawu2" value="{{ $to->word_nrzestawu2 }}"">
-                        <button type="submit" class="btn btn-primary">Resetuj</button>
-                    </form>
-                @else
-                    <form action="{{ action('App\Http\Controllers\SlowkaController@update',[$to->id] )}}" method="POST" role="form" style='display:inline'>
-                        @csrf
-                        <input type="hidden" name="coupdate" value="resetuj1">
-                        <input type="hidden" name="page" value="{{ (empty(request('page'))? 1 : request('page')) }}"">
-                        <input type="hidden" name="word_nrzestawu2" value="{{ $to->word_nrzestawu2 }}"">
-                        <button type="submit" class="btn btn-success">Resetuj</button>
-
-                    </form>
                 @endif
 
                 @if (!$to->dodaj_slowo2)
