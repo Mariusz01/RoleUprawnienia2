@@ -51,6 +51,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('roles', App\Http\Controllers\RoleController::class);
         Route::resource('users', App\Http\Controllers\UserController::class);
         Route::resource('words', App\Http\Controllers\WordController::class);
+        Route::post('words/{nrzestawu}/destroy', 'App\Http\Controllers\WordController@destroy')->name('words.destroy'); //duży problem ale działa
         Route::get('/users', 'App\Http\Controllers\UserController@index')->name('admin.users.index');
         Route::post('/users/{user_id}/approve', 'App\Http\Controllers\UserController@approve')->name('admin.users.approve');
         Route::post('/users/{user_id}/notapprove', 'App\Http\Controllers\UserController@approve')->name('admin.users.notapprove');
@@ -60,11 +61,11 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Route::group(['middleware' => ['auth', 'verified']], function() {
-    // Route::resource('slowka', App\Http\Controllers\SlowkaController::class);
-    // Route::resource('roles', App\Http\Controllers\RoleController::class);
-    // Route::resource('/users', App\Http\Controllers\UserController::class);
-    // Route::resource('products', App\Http\Controllers\ProductController::class);
-    // Route::resource('words', App\Http\Controllers\WordController::class);
+// Route::resource('slowka', App\Http\Controllers\SlowkaController::class);
+// Route::resource('roles', App\Http\Controllers\RoleController::class);
+// Route::resource('/users', App\Http\Controllers\UserController::class);
+// Route::resource('products', App\Http\Controllers\ProductController::class);
+// Route::resource('words', App\Http\Controllers\WordController::class);
 // to niżej całkiem wyłączyłem, nie trzeba było
-    // Route::get('/slowka/create/{nrzestawu}/{robicdla}', [App\Http\Controllers\SlowkaController::class, 'create'])->name('slowka.create');
+// Route::get('/slowka/create/{nrzestawu}/{robicdla}', [App\Http\Controllers\SlowkaController::class, 'create'])->name('slowka.create');
 // });

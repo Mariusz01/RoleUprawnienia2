@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@php
+    // echo "nr zestawu: ".$nrzestawu."<br />page: ".$page;
+@endphp
+
 @section('content')
     <div class="row">
         <div class="col-lg-12 margin-tb">
@@ -7,7 +11,8 @@
                 <h2>Edycja słowa</h2>
             </div>
             <div class="pull-right">
-                <a href="{{ URL::previous() }}" class="btn btn-primary">Wróć</a>
+                {{-- <a href="{{ URL::previous() }}" class="btn btn-primary">Wróć</a> --}}
+                <a class="btn btn-info" href="{{ route('words.show', [$nrzestawu, 'page' => $page]) }}">Pokaż</a>
             </div>
         </div>
     </div>
@@ -23,11 +28,18 @@
             </ul>
         </div>
     @endif
+    @if ($message = Session::get('success'))
+        <div class="alert alert-success">
+            <p>{{ $message }}</p>
+        </div>
+    @endif
 
 
     <form action="{{ route('words.update',$word->id) }}" method="POST">
     	@csrf
         @method('PUT')
+        <input type="hidden" name="page" value="{{ $page }}">
+        <input type="hidden" name="coupdate" value="edytuj1">
         <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
                 <strong>Nr id:</strong>
@@ -61,11 +73,9 @@
 		        </div>
 		    </div>
 		    <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-		      <button type="submit" class="btn btn-primary">Submit</button>
+		      <button type="submit" class="btn btn-primary">Zapisz</button>
 		    </div>
 		</div>
-
-
     </form>
 
 @endsection
