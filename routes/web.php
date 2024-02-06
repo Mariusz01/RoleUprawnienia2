@@ -31,7 +31,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['approved', 'verified'])->group(function () {
         Route::get('/home', 'App\Http\Controllers\HomeController@index')->name('home');
         // te były osobno, pierwsze jako przykład ról
-        Route::resource('slowka', App\Http\Controllers\SlowkaController::class);
+        Route::resource('/slowka', App\Http\Controllers\SlowkaController::class);
         // dla update slowka, były problemy
         Route::post('/slowka/{id}/update', 'App\Http\Controllers\SlowkaController@update');
         // Route::post('slowka/{id}/edit', 'App\Http\Controllers\SlowkaController@update'); // Dodaj tę linię obsługującą POST

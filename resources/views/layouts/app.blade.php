@@ -58,7 +58,7 @@
                             @if(auth()->user()->hasRole('Admin'))
 
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle"  role="button" data-bs-toggle="dropdown"
+                                    <a class="nav-link dropdown-toggle {{ str_starts_with(request()->path(), 'users') ? 'active' : '' }}"  role="button" data-bs-toggle="dropdown"
                                         aria-haspopup="true" aria-expanded="false" v-pre>Manage Users</a>
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                         {{-- <a class="dropdown-item" href="{{ route('admin.users.index') }}">Użytkownicy do zatwierdzenia</a> --}}
@@ -66,12 +66,12 @@
                                     </div>
                                 </li>
 
-                                <li><a class="nav-link" href="{{ route('roles.index') }}">Manage Role</a></li>
-                                <li><a class="nav-link" href="{{ route('products.index') }}">Manage Product</a></li>
+                                <li><a class="nav-link {{ str_starts_with(request()->path(), 'roles') ? 'active' : '' }}" href="{{ route('roles.index') }}">Manage Role</a></li>
+                                <li><a class="nav-link {{ str_starts_with(request()->path(), 'products') ? 'active' : '' }}" href="{{ route('products.index') }}">Manage Product</a></li>
 
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle"  role="button" data-bs-toggle="dropdown"
-                                        aria-haspopup="true" aria-expanded="false" v-pre>Słówka</a>
+                                    <a class="nav-link dropdown-toggle {{ str_starts_with(request()->path(), 'words') ? 'active' : '' }}" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>Słówka</a>
+
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                         {{-- <a class="dropdown-item" href="{{ route('admin.users.index') }}">Użytkownicy do zatwierdzenia</a> --}}
                                         <a class="nav-link" href="{{ route('words.index') }}">Lista</a>
@@ -80,8 +80,12 @@
                             {{-- @elseif(!auth()->user()->approved_add) --}}
                             @endif
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle"  role="button" data-bs-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="false" v-pre>Moje słówka</a>
+
+                                {{-- <a class="nav-link dropdown-toggle"  role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>Moje słówka</a> --}}
+
+                                {{-- <a class="nav-link dropdown-toggle {{ request()->is('slowka') ? 'active' : '' }}" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>Moje słówka</a> --}}
+                                <a class="nav-link dropdown-toggle {{ str_starts_with(request()->path(), 'slowka') ? 'active' : '' }}" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>Moje słówka</a>
+
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     {{-- <a class="dropdown-item" href="{{ route('admin.users.index') }}">Użytkownicy do zatwierdzenia</a> --}}
                                     <a class="dropdown-item" href="{{ route('slowka.index') }}">Tabele słowek</a>

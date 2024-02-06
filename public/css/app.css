@@ -9,8 +9,23 @@ svg {
     /* fill: #007bff;  Kolor wypełnienia ikony */
   }
 
-
-
 div{
     padding-bottom: 1px;
+}
+
+.aktualne {
+    font-weight: bold;
+    font-style: italic;
+    color: #1900ff; /* kolor podświetlenia */
+}
+
+link.active{
+    font-weight: bold;
+    font-style: italic;
+    color: #1900ff; /* kolor podświetlenia */
+}
+
+.test{
+    font-weight: bold;
+    color:#ff0000 red;
 }
