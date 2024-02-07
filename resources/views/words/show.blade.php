@@ -73,7 +73,7 @@
                 @endif
 
                 @if ($to->usun_slowo > 0)
-                    {!! Form::open(['method' => 'POST', 'route' => ['words.destroy', $to->id], 'style' => 'display:inline']) !!}
+                    {!! Form::open(['method' => 'POST', 'route' => ['words.usun', $to->id], 'style' => 'display:inline']) !!}
                         @csrf
                         {{-- @method('PUT') --}}
                         {!! Form::hidden('nrzestawu', $nrzestawu) !!}
@@ -83,7 +83,7 @@
                         {!! Form::submit('Dodaj', ['class' => 'btn btn-success']) !!}
                     {!! Form::close() !!}
                 @else
-                    {!! Form::open(['method' => 'POST', 'route' => ['words.destroy', $to->id], 'style' => 'display:inline']) !!}
+                    {!! Form::open(['method' => 'POST', 'route' => ['words.usun', $to->id], 'style' => 'display:inline']) !!}
                         @csrf
                         {{-- @method('PUT') --}}
                         {!! Form::hidden('nrzestawu', $nrzestawu) !!}

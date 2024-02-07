@@ -47,7 +47,7 @@ class CreateAdminUserSeeder extends Seeder
         $role2->syncPermissions($selectedColumnValues);
 
         $role3 = Role::create(['name' => 'UzytkownikTabele']);
-        $selectedPermissionIds = [15, 16, 17, 18, 19]; // Identyfikatory wierszy, których kolumnę chcesz pobrać
+        $selectedPermissionIds = [16, 17, 18, 19, 20]; // Identyfikatory wierszy, których kolumnę chcesz pobrać
         $selectedColumnValues = Permission::whereIn('id', $selectedPermissionIds)->pluck('id');
         $role3->syncPermissions($selectedColumnValues);
 

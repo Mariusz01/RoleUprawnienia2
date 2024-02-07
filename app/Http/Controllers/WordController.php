@@ -16,6 +16,8 @@ class WordController extends Controller
          $this->middleware('permission:word-create', ['only' => ['create','store']]);
          $this->middleware('permission:word-edit', ['only' => ['edit','update']]);
          $this->middleware('permission:word-delete', ['only' => ['destroy']]);
+
+         $this->middleware('permission:word-delete', ['only' => ['usun']]);
     }
     /**
      * Display a listing of the resource.
@@ -171,7 +173,10 @@ class WordController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request, $id){
+        //
+    }
+    public function usun(Request $request, $id)
     {
         request()->validate([
             'nrzestawu' => 'required|numeric',
