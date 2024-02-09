@@ -19,10 +19,10 @@ div{
     color: #1900ff; /* kolor podświetlenia */
 }
 
-link.active{
+active{
     font-weight: bold;
     font-style: italic;
-    color: #1900ff; /* kolor podświetlenia */
+    color: #26233b; /* kolor podświetlenia */
 }
 
 .test{

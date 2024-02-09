@@ -33,74 +33,66 @@
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    <strong>TEST</strong>
-                </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand" href="/"><strong>MM</strong></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav mr-auto"></ul>
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
 
-
-                    <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
-                        <!-- Authentication Links -->
                         @guest
-                            <li><a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a></li>
-                            <li><a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a></li>
+                            <li><a class="nav-link" href="{{ route('login') }}">{{ __('Zaloguj się') }}</a></li>
+                            <li><a class="nav-link" href="{{ route('register') }}">{{ __('Zarejestruj się') }}</a></li>
                         @else
-                        @auth
-                            @if(auth()->user()->hasRole('Admin'))
-
+                            @auth
+                                @if(auth()->user()->hasRole('Admin'))
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle {{ str_starts_with(request()->path(), 'users') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Użytkownicy
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="{{ route('admin.users.index') }}">Lista użytkowników</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle {{ str_starts_with(request()->path(), 'products') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Produkty
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="{{ route('products.index') }}">Lista produktów</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle {{ str_starts_with(request()->path(), 'words') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Słówka
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="{{ route('words.index') }}">Lista tabel</a></li>
+                                        </ul>
+                                    </li>
+                                @endif
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle {{ str_starts_with(request()->path(), 'users') ? 'active' : '' }}"  role="button" data-bs-toggle="dropdown"
-                                        aria-haspopup="true" aria-expanded="false" v-pre>Manage Users</a>
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                        {{-- <a class="dropdown-item" href="{{ route('admin.users.index') }}">Użytkownicy do zatwierdzenia</a> --}}
-                                        <a class="dropdown-item" href="{{ route('admin.users.index') }}">Użytkownicy</a>
-                                    </div>
+                                    <a class="nav-link dropdown-toggle {{ str_starts_with(request()->path(), 'slowka') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Moje słówka
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="{{ route('slowka.index') }}">Lista moich tabel</a></li>
+                                    </ul>
                                 </li>
-
-                                <li><a class="nav-link {{ str_starts_with(request()->path(), 'roles') ? 'active' : '' }}" href="{{ route('roles.index') }}">Manage Role</a></li>
-                                <li><a class="nav-link {{ str_starts_with(request()->path(), 'products') ? 'active' : '' }}" href="{{ route('products.index') }}">Manage Product</a></li>
-
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle {{ str_starts_with(request()->path(), 'words') ? 'active' : '' }}" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>Słówka</a>
-
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                        {{-- <a class="dropdown-item" href="{{ route('admin.users.index') }}">Użytkownicy do zatwierdzenia</a> --}}
-                                        <a class="nav-link" href="{{ route('words.index') }}">Lista</a>
-                                    </div>
-                                </li>
-                            {{-- @elseif(!auth()->user()->approved_add) --}}
-                            @endif
-                            <li class="nav-item dropdown">
-
-                                {{-- <a class="nav-link dropdown-toggle"  role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>Moje słówka</a> --}}
-
-                                {{-- <a class="nav-link dropdown-toggle {{ request()->is('slowka') ? 'active' : '' }}" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>Moje słówka</a> --}}
-                                <a class="nav-link dropdown-toggle {{ str_starts_with(request()->path(), 'slowka') ? 'active' : '' }}" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>Moje słówka</a>
-
-                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    {{-- <a class="dropdown-item" href="{{ route('admin.users.index') }}">Użytkownicy do zatwierdzenia</a> --}}
-                                    <a class="dropdown-item" href="{{ route('slowka.index') }}">Tabele słowek</a>
-                                </div>
-                            </li>
-                        @endauth
-                        <li class="nav-item dropdown">
+                            @endauth
+                            <li class="navbar-nav ml-auto">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                                    onclick="event.preventDefault();
+                                                    document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
 
@@ -114,8 +106,9 @@
                 </div>
             </div>
         </nav>
+    </div>
 
-
+    <div>
         <main class="py-4">
             <div class="container">
                 @yield('content')
