@@ -59,6 +59,14 @@
                                         </ul>
                                     </li>
                                     <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle {{ str_starts_with(request()->path(), 'roles') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Role i uprawnienia
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="{{ route('roles.index') }}">Lista ról</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle {{ str_starts_with(request()->path(), 'products') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         Produkty
                                         </a>
