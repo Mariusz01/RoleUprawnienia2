@@ -15,9 +15,9 @@ class WordController extends Controller
          $this->middleware('permission:word-list|word-create|word-edit|word-delete', ['only' => ['index','show']]);
          $this->middleware('permission:word-create', ['only' => ['create','store']]);
          $this->middleware('permission:word-edit', ['only' => ['edit','update']]);
-         $this->middleware('permission:word-delete', ['only' => ['destroy']]);
+         $this->middleware('permission:word-delete', ['only' => ['destroy,']]);
 
-         $this->middleware('permission:word-delete', ['only' => ['usun']]);
+         $this->middleware('permission:word-aktualizuj', ['only' => ['aktualizuj']]);
     }
     /**
      * Display a listing of the resource.
@@ -94,8 +94,7 @@ class WordController extends Controller
         )
         ->paginate(15);
 
-        return view('words.show',compact('word', 'nrzestawu', 'dane'))
-        ->with('success','Poszło show');
+        return view('words.show',compact('word', 'nrzestawu', 'dane'));
     }
 
     /**

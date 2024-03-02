@@ -29,3 +29,15 @@ active{
     font-weight: bold;
     color:#ff0000 red;
 }
+
+.normal-link {
+    color: inherit; /* Użyj koloru dziedziczonego od rodzica */
+    text-decoration: none; /* Usuń podkreślenie */
+    cursor: text; /* Zmień kursor na tekstowy */
+}
+
+.szeroki-przycisk {
+    width: 100%;
+    padding: 10px; /* Możesz dostosować padding według własnych preferencji */
+    box-sizing: border-box; /* Zapewnia, że padding nie dodaje się do szerokości */
+}

@@ -39,6 +39,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/usunzestaw', 'App\Http\Controllers\SlowkaController@usunzestaw')->name('slowka.usunzestaw');
         Route::resource('usertab', App\Http\Controllers\WordController::class);
 
+        Route::resource('/nauka', App\Http\Controllers\NaukaController::class);
+        Route::post('/nauka/{nauka}', 'App\Http\Controllers\NaukaController@show')->name('nauka.show');
+        // Route::get('/nauka/{nauka}/{slowo}/{znaczenie}', 'TwojController@show')->name('nauka.show');
+        Route::post('/uaktualnij', 'App\Http\Controllers\NaukaController@uaktualnij')->name('nauka.uaktualnij');
+
+
         //upload: Wyświetla formularz do przesyłania plików JSON
         Route::get('/upload', [App\Http\Controllers\JsonController::class, 'showUploadForm'])->name('uploadForm');
         //process-json: Obsługuje przesyłane pliki i przetwarza je po stronie serwera
@@ -55,6 +61,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/users', 'App\Http\Controllers\UserController@index')->name('admin.users.index');
         Route::post('/users/{user_id}/approve', 'App\Http\Controllers\UserController@approve')->name('admin.users.approve');
         Route::post('/users/{user_id}/notapprove', 'App\Http\Controllers\UserController@approve')->name('admin.users.notapprove');
+
+        Route::get('/pobierz-dane', [App\Http\Controllers\DaneController::class, 'pobierzDaneZPliku']);
 
 
     });

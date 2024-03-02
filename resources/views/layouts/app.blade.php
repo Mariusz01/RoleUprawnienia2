@@ -21,6 +21,7 @@
 
     <link rel="stylesheet" href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css'>
     <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     {{-- <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <script src="{{ asset('js/app.js') }}" defer></script> --}}
@@ -89,6 +90,7 @@
                                     </a>
                                     <ul class="dropdown-menu">
                                         <li><a class="dropdown-item" href="{{ route('slowka.index') }}">Lista moich tabel</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('nauka.index') }}">Nauka</a></li>
                                     </ul>
                                 </li>
                             @endauth

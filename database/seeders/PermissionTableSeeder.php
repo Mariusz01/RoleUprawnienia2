@@ -31,13 +31,19 @@ class PermissionTableSeeder extends Seeder
             'word-create', //12
             'word-edit', //13
             'word-delete', //14
-            'word-usun', //15
+            'word-aktualizuj', //15
 
             'slowka-index', //16
             'slowka-list', //17
             'slowka-create', //18
             'slowka-edit', //19
             'slowka-delete', //20
+
+            'nauka-index', //21
+            'nauka-list', //22
+            'nauka-create', //23
+            'nauka-edit', //24
+            'nauka-delete', //25
 
 
 

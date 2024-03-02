@@ -2,15 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Slowka;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\Word;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Model;
-use Psy\Command\WhereamiCommand;
-use stdClass;
 
 class SlowkaController extends Controller
 {
@@ -221,13 +215,33 @@ class SlowkaController extends Controller
                 'dodaj_dotab2' => 0,
                 'dodaj_slowo2' => 0,
                 'edytuj_slowo2' => 0,
-                'dalej2_1' => 0,
-                'dalej2_2' => 0,
-                'dalej2_3' => 0,
-                'nauka2_1' => 0,
-                'nauka2_2' => 0,
-                'nauka2_3' => 0,
-                'nauka2_4' => 0,
+                'n2_dodano' => NULL,
+                'n2_nauka' => NULL,
+                'n2_ile_powt' => 0,
+                'n2_1a' => 0,
+                'n2_1b' => 0,
+                'n2_1c' => null,
+                'n2_2a' => 0,
+                'n2_2b' => 0,
+                'n2_2c' => null,
+                'n2_3a' => 0,
+                'n2_3b' => 0,
+                'n2_3c' => null,
+                'n2_4a' => 0,
+                'n2_4b' => 0,
+                'n2_4c' => null,
+                'n2_5a' => 0,
+                'n2_5b' => 0,
+                'n2_5c' => null,
+                'n2_6a' => 0,
+                'n2_6b' => 0,
+                'n2_6c' => null,
+                'n2_7a' => 0,
+                'n2_7b' => 0,
+                'n2_7c' => null,
+                'n2_8a' => 0,
+                'n2_8b' => 0,
+                'n2_8c' => null,
             ]);
             $nrzestawu = $word->nrzestawu;
             return redirect()->route('slowka.show', [$nrzestawu, 'page' => $page]);
@@ -236,14 +250,44 @@ class SlowkaController extends Controller
             ->where('id', $id)->update([
                 'dodaj_slowo2' => true,
                 'nrzestawu2' => $dane['word_nrzestawu2'],
+                'n2_dodano' => now(),
+                'n2_nauka' => now(),
+                'n2_ile_powt' => $user->ile_powtorek,
+                'n2_1a' => $user->ile_powtorek,
+                'n2_1c' => now(),
+                'n2_2a' => $user->ile_powtorek,
+                'n2_2c' => now(),
+                'n2_3a' => $user->ile_powtorek,
+                'n2_3c' => now(),
+                'n2_4a' => $user->ile_powtorek,
+                'n2_4c' => now(),
+                'n2_5a' => $user->ile_powtorek,
+                'n2_5c' => now(),
+                'n2_6a' => $user->ile_powtorek,
+                'n2_6c' => now(),
+                'n2_7a' => $user->ile_powtorek,
+                'n2_7c' => now(),
+                'n2_8a' => $user->ile_powtorek,
+                'n2_8c' => now(),
             ]);
             return redirect()->route('slowka.show', [$dane['word_nrzestawu2'], 'page' => $page]) //page musi być tak zapisane aby przekazało wartość
                         ->with('success','Dodałeś słowo do nauki');
         }elseif($dane['coupdate'] === 'usun1'){
             DB::table($userTabela)
             ->where('id', $id)->update([
-                'dodaj_slowo2' => 0,
+                'dodaj_slowo2' => false,
                 'nrzestawu2' => 0,
+                'n2_dodano' => null,
+                'n2_nauka' => null,
+                'n2_ile_powt' => 0,
+                'n2_1a' => 0,
+                'n2_2a' => 0,
+                'n2_3a' => 0,
+                'n2_4a' => 0,
+                'n2_5a' => 0,
+                'n2_6a' => 0,
+                'n2_7a' => 0,
+                'n2_8a' => 0,
             ]);
             return redirect()->route('slowka.show', [$dane['word_nrzestawu2'], 'page' => $page]) //page musi być tak zapisane aby przekazało wartość
                         ->with('success','Usunąłeś słowo z listy do nauki');
@@ -284,13 +328,33 @@ class SlowkaController extends Controller
                 'dodaj_dotab2' => 0,
                 'dodaj_slowo2' => 0,
                 'edytuj_slowo2' => 0,
-                'dalej2_1' => 0,
-                'dalej2_2' => 0,
-                'dalej2_3' => 0,
-                'nauka2_1' => 0,
-                'nauka2_2' => 0,
-                'nauka2_3' => 0,
-                'nauka2_4' => 0,
+                'n2_dodano' => NULL,
+                'n2_nauka' => NULL,
+                'n2_ile_powt' => 0,
+                'n2_1a' => 0,
+                'n2_1b' => 0,
+                'n2_1c' => null,
+                'n2_2a' => 0,
+                'n2_2b' => 0,
+                'n2_2c' => null,
+                'n2_3a' => 0,
+                'n2_3b' => 0,
+                'n2_3c' => null,
+                'n2_4a' => 0,
+                'n2_4b' => 0,
+                'n2_4c' => null,
+                'n2_5a' => 0,
+                'n2_5b' => 0,
+                'n2_5c' => null,
+                'n2_6a' => 0,
+                'n2_6b' => 0,
+                'n2_6c' => null,
+                'n2_7a' => 0,
+                'n2_7b' => 0,
+                'n2_7c' => null,
+                'n2_8a' => 0,
+                'n2_8b' => 0,
+                'n2_8c' => null,
             ]);
         }
 

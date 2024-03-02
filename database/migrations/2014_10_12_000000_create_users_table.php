@@ -18,9 +18,9 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->smallInteger('dodane_tab')->default(0);
-            $table->smallInteger('zpalacone1')->default(0);
+            $table->smallInteger('ile_powtorek')->default(10);
+            $table->smallInteger('zaplacone1')->default(0);
             $table->smallInteger('zaplacone2')->default(0);
-            $table->smallInteger('zaplacone3')->default(0);
             $table->boolean('admin')->default(false);
             $table->timestamp('approved_at')->nullable();
             $table->rememberToken();
