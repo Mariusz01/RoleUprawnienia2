@@ -78,7 +78,7 @@
 
         </div>
         <div class="col">
-            
+
         </div>
     </div>
 </div>
@@ -152,7 +152,7 @@
                         {!! Form::hidden('slowo0', $n2_1->slowo2) !!}
                         {!! Form::hidden('znaczenie0', $to->znaczenie2) !!}
                         {!! Form::hidden('dalej', 'zaznaczono') !!}
-                        {!! Form::hidden('nauka', '1') !!}
+                        {{-- {!! Form::hidden('nauka', '1') !!} --}}
                         {!! Form::hidden('znaczenie1', $dane->get(0)->znaczenie2) !!}
                         {!! Form::hidden('znaczenie2', $dane->get(1)->znaczenie2) !!}
                         {!! Form::hidden('znaczenie3', $dane->get(2)->znaczenie2) !!}
@@ -234,7 +234,7 @@
                         {!! Form::hidden('slowo0', $to->slowo2) !!}
                         {!! Form::hidden('znaczenie0', $n2_1->znaczenie2) !!}
                         {!! Form::hidden('dalej', 'zaznaczono') !!}
-                        {!! Form::hidden('nauka', '1') !!}
+                        {{-- {!! Form::hidden('nauka', '2') !!} --}}
                         {!! Form::hidden('slowo1', $dane->get(0)->slowo2) !!}
                         {!! Form::hidden('slowo2', $dane->get(1)->slowo2) !!}
                         {!! Form::hidden('slowo3', $dane->get(2)->slowo2) !!}
