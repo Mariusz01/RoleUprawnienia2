@@ -72,7 +72,7 @@
             Ilość punktów: {{ $sumaPunktów }}
         </div>
         <div class="col">
-
+            Pozostało {{ $ileSlowekZostalo }} słówek
         </div>
         <div class="col">
 

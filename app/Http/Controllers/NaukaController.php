@@ -201,9 +201,13 @@ class NaukaController extends Controller
 
                 //pobranie ile jest punktów
                 $sumaPunktów = DB::table($userTabela)->sum('pkt_razem2');
+                $ileSlowekZostalo = DB::table($userTabela)
+                ->where('n2_1a', '>', 0)
+                ->whereDate('n2_1c', '<=', Carbon::today())
+                ->count();
 
 
-                return view('nauka.show', compact('tytul','n2_1','dane','dalej','czyOK','sumaPunktów','jakaStrona'));
+                return view('nauka.show', compact('tytul','n2_1','dane','dalej','czyOK','sumaPunktów','jakaStrona','ileSlowekZostalo'));
             }else{// kiedy wyświetla się do wyboru, słówko a potem losuje 3 błędne odpowiedzi
                 $n2_1 = DB::table($userTabela)
                 ->where('n2_1a', '>', 0)
@@ -230,8 +234,12 @@ class NaukaController extends Controller
 
                     //pobranie ile jest punktów
                     $sumaPunktów = DB::table($userTabela)->sum('pkt_razem2');
+                    $ileSlowekZostalo = DB::table($userTabela)
+                    ->where('n2_1a', '>', 0)
+                    ->whereDate('n2_1c', '<=', Carbon::today())
+                    ->count();
 
-                    return view('nauka.show', compact('tytul','n2_1','dane','sumaPunktów','jakaStrona'));
+                    return view('nauka.show', compact('tytul','n2_1','dane','sumaPunktów','jakaStrona','ileSlowekZostalo'));
                     // return redirect()->route('nauka.show',[1,$tytul,$n2_1,$dane,$zmiennaTestowa]);
                 }
             }
@@ -326,9 +334,13 @@ class NaukaController extends Controller
 
                 //pobranie ile jest punktów
                 $sumaPunktów = DB::table($userTabela)->sum('pkt_razem2');
+                //pobranie ile słówek pozostało do nauki
+                $ileSlowekZostalo = DB::table($userTabela)
+                ->where('n2_2a', '>', 0)
+                ->whereDate('n2_2c', '<=', Carbon::today())
+                ->count();
 
-
-                return view('nauka.show', compact('tytul','n2_1','dane','dalej','czyOK','sumaPunktów','jakaStrona'));
+                return view('nauka.show', compact('tytul','n2_1','dane','dalej','czyOK','sumaPunktów','jakaStrona','ileSlowekZostalo'));
             }else{// kiedy wyświetla się do wyboru, słówko a potem losuje 3 błędne odpowiedzi
                 $n2_1 = DB::table($userTabela)
                 ->where('n2_1a', '>', 0)
@@ -355,8 +367,14 @@ class NaukaController extends Controller
 
                     //pobranie ile jest punktów
                     $sumaPunktów = DB::table($userTabela)->sum('pkt_razem2');
+                    //pobranie ile słówek pozostało do nauki
+                    $ileSlowekZostalo = DB::table($userTabela)
+                    ->where('n2_2a', '>', 0)
+                    ->whereDate('n2_2c', '<=', Carbon::today())
+                    ->count();
 
-                    return view('nauka.show', compact('tytul','n2_1','dane','sumaPunktów','jakaStrona'));
+
+                    return view('nauka.show', compact('tytul','n2_1','dane','sumaPunktów','jakaStrona',"ileSlowekZostalo"));
                     // return redirect()->route('nauka.show',[1,$tytul,$n2_1,$dane,$zmiennaTestowa]);
                 }
             }

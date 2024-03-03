@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class ZegarekController extends Controller
+class TarczeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -64,6 +64,6 @@ class ZegarekController extends Controller
 
     public function politykaprywatnosci(){
 
-        return view('zegarek.politykaprywatnosci');
+        return view('tarcze.politykaprywatnosci');
     }
 }
